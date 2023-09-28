@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.reactivecircus.flowbinding:flowbinding-swiperefreshlayout:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/5d0e3984231fca048c145c4a338ca24e/transformed/flowbinding-swiperefreshlayout-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5d0e3984231fca048c145c4a338ca24e/transformed/flowbinding-swiperefreshlayout-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-swiperefreshlayout/1.2.0/20a38a490fd1947b554fb9574054e570a9b53d5e/flowbinding-swiperefreshlayout-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-swiperefreshlayout/1.2.0/f89234ea5f1ad3162bab5172210240747e24cfc5/flowbinding-swiperefreshlayout-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

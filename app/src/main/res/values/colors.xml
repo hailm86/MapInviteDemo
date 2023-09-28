@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#54C1FF</color>
+    <color name="colorPrimaryDark">#1D6CBA</color>
+    <color name="light_background">#CCF3F5</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="color_sampdoria">#4f9be8</color>
+    <color name="color_montpellier">#fc341e</color>
+    <color name="color_noir">#222</color>
+    <color name="color_november">#697080</color>
+    <color name="color_october">#C6CBD5</color>
+    <color name="hex.222222">#222222</color>
+    <color name="hex.4267B2">#4267B2</color>
+    <color name="hex.FC341E">#FC341E</color>
+    <color name="color_cloud">#f7f7fa</color>
+
+    <color name="random_1">#A313D8</color>
+    <color name="random_2">#1BD0BB</color>
+    <color name="random_3">#31BC3C</color>
+    <color name="random_4">#062AEF</color>
+    <color name="random_5">#EF06DD</color>
+    <color name="random_6">#FF8900</color>
+</resources>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.reactivecircus.flowbinding:flowbinding-recyclerview:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/42ec5a316fb202a6601cbe91c932abbf/transformed/flowbinding-recyclerview-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/42ec5a316fb202a6601cbe91c932abbf/transformed/flowbinding-recyclerview-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-recyclerview/1.2.0/58c09d46337f79049c64d9d88822bd710d55b56c/flowbinding-recyclerview-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-recyclerview/1.2.0/23486c5207b167afab980cbf9b4042fab57e6f60/flowbinding-recyclerview-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

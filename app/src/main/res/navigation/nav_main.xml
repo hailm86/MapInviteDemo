@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.hailm.mapinvitedemo.ui.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.hailm.mapinvitedemo.ui.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@+id/loginFragment"
+        app:popUpTo="@id/nav_main" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.hailm.mapinvitedemo.ui.home.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@+id/homeFragment"
+        app:popUpTo="@id/nav_main" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.hailm.mapinvitedemo.ui.register.RegisterFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" />
+    <action
+        android:id="@+id/action_global_registerFragment"
+        app:destination="@id/registerFragment" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.hailm.mapinvitedemo.ui.map.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+    <action
+        android:id="@+id/action_global_mapFragment"
+        app:destination="@id/mapFragment" />
+    <fragment
+        android:id="@+id/inviteFragment"
+        android:name="com.hailm.mapinvitedemo.ui.invite.InviteFragment"
+        android:label="fragment_invite"
+        tools:layout="@layout/fragment_invite" />
+    <action
+        android:id="@+id/action_global_inviteFragment"
+        app:destination="@id/inviteFragment" />
+    <fragment
+        android:id="@+id/inviteListFragment"
+        android:name="com.hailm.mapinvitedemo.ui.invite_list.InviteListFragment"
+        android:label="fragment_invite_list"
+        tools:layout="@layout/fragment_invite_list" />
+    <action
+        android:id="@+id/action_global_inviteListFragment"
+        app:destination="@id/inviteListFragment" />
+</navigation>

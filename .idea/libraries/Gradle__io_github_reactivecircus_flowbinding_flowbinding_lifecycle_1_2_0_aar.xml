@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.reactivecircus.flowbinding:flowbinding-lifecycle:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/4d5fdf4b0f969753fd7097173737e0dc/transformed/flowbinding-lifecycle-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4d5fdf4b0f969753fd7097173737e0dc/transformed/flowbinding-lifecycle-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-lifecycle/1.2.0/92e1ee692ce1098a95c0f369aba9bc17edf4b66e/flowbinding-lifecycle-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-lifecycle/1.2.0/3fb82198243591dee91596ebffa14af705391309/flowbinding-lifecycle-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.akarnokd:kotlin-flow-extensions:0.0.8">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.akarnokd/kotlin-flow-extensions/0.0.8/e0e4ec4cceb57e5599d6f7390a6533c12dded6b0/kotlin-flow-extensions-0.0.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.akarnokd/kotlin-flow-extensions/0.0.8/336ec8f6a8a045921b82cfe26b5c2a0c54766c89/kotlin-flow-extensions-0.0.8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.akarnokd/kotlin-flow-extensions/0.0.8/36fe2f762acef83f3198f4ed203d457fad52aa16/kotlin-flow-extensions-0.0.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

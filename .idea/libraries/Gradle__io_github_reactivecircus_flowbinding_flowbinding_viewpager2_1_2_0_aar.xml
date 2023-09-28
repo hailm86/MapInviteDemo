@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.reactivecircus.flowbinding:flowbinding-viewpager2:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c327bb06c0db20eb15b04f2b774d20cc/transformed/flowbinding-viewpager2-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c327bb06c0db20eb15b04f2b774d20cc/transformed/flowbinding-viewpager2-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-viewpager2/1.2.0/5250d09d52b051091f3f18c46cdb8bb8a1037d4e/flowbinding-viewpager2-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-viewpager2/1.2.0/42cbbf35d2ccbbee12828d14108703698773b283/flowbinding-viewpager2-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

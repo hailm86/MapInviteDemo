@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">MapInviteDemo</string>
+
+    <!--    // Test ads-->
+    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+
+    <!-- navigation -->
+    <string name="text.home">Trang chủ</string>
+    <string name="text.community">Tập đọc</string>
+    <string name="text.profile">Tài khoản</string>
+
+
+    <string name="error">Error</string>
+    <string name="got_it">Got it</string>
+    <string name="cancel">Cancel</string>
+    <string name="text.get_started">Get Started</string>
+    <string name="text.by_hailm">By2Studio</string>
+
+
+    // Date string
+    <string name="sdf_ymd_w_hm">yyyy年MM月dd日(E)\nah:mm</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing.min">1px</dimen>
+    <dimen name="spacing.tiny">4dp</dimen>
+    <dimen name="spacing.tiny_x">6dp</dimen>
+    <dimen name="spacing.small">8dp</dimen>
+    <dimen name="spacing.small_x">12dp</dimen>
+    <dimen name="spacing.medium">16dp</dimen>
+    <dimen name="spacing.medium_x">20dp</dimen>
+    <dimen name="spacing.large">24dp</dimen>
+    <dimen name="spacing.large_x">30dp</dimen>
+
+    <dimen name="text.micro">8sp</dimen>
+    <dimen name="text.minor">10sp</dimen>
+    <dimen name="text.small">12sp</dimen>
+    <dimen name="text.medium">14sp</dimen>
+    <dimen name="text.large">16sp</dimen>
+    <dimen name="text.major">18sp</dimen>
+    <dimen name="text.major_x">20sp</dimen>
+    <dimen name="text.major_xx">22sp</dimen>
+    <dimen name="text.major_xl">24sp</dimen>
+    <dimen name="text.massive">26sp</dimen>
+
+    <dimen name="default_bottom_navigation_height">60dp</dimen>
+</resources>

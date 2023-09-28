@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: io.github.reactivecircus.flowbinding:flowbinding-navigation:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/5a7f05e3a3c9fa498fe49e1e67c3bab9/transformed/flowbinding-navigation-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5a7f05e3a3c9fa498fe49e1e67c3bab9/transformed/flowbinding-navigation-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-navigation/1.2.0/5dd4453fc330a607554a9a9b9084cfe6da31353d/flowbinding-navigation-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.reactivecircus.flowbinding/flowbinding-navigation/1.2.0/ea54674691f505e2b77179254ab3bb87e783fab3/flowbinding-navigation-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

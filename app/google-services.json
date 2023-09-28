@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "875334452151",
+    "project_id": "demomapinvite",
+    "storage_bucket": "demomapinvite.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875334452151:android:a6f21ada96abea408d5e32",
+        "android_client_info": {
+          "package_name": "com.hailm.mapinvitedemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsUcLmRlrePirSlBeck0OO6CrTZzSgsGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875334452151:android:3ff5a7056212397d8d5e32",
+        "android_client_info": {
+          "package_name": "com.hailm.mapinvitedemo.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsUcLmRlrePirSlBeck0OO6CrTZzSgsGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

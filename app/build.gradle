@@ -1,0 +1,95 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
+    id("com.google.gms.google-services")
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+}
+
+android {
+    namespace 'com.hailm.mapinvitedemo'
+    compileSdk 33
+
+    defaultConfig {
+        manifestPlaceholders["hostName"] = "www.example.com"
+        applicationId "com.hailm.mapinvitedemo"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+    kapt {
+        correctErrorTypes = true
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+    flavorDimensions += "version"
+    productFlavors {
+        create("dev") {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension = "version"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+        create("product") {
+            dimension = "version"
+            applicationIdSuffix = ".product"
+            versionNameSuffix = "-product"
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.flavorName
+            def buildType = variant.buildType.name.capitalize()
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode
+
+            def date = new Date()
+            def formattedDate = date.format('yyMMdd_HHmm')
+            def appName = "BaseApp${flavor}${buildType}_v${versionName}(${versionCode})_${formattedDate}.apk"
+            outputFileName = appName
+        }
+    }
+}
+
+dependencies {
+
+    implementation libraries
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0'
+    kapt librariesKapt
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.8.1'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+    testImplementation testLibraries
+    androidTestImplementation androidTestLibraries
+}
