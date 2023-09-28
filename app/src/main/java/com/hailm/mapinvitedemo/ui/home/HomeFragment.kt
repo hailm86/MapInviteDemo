@@ -37,6 +37,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         homeViewModel.hasPhoneNumber.observe(viewLifecycleOwner) {
             if (it) {
                 findNavController().navigate(NavMainDirections.actionGlobalMapFragment())
+//                homeViewModel.onNavigationHandled()
             } else {
                 Toast.makeText(context, "Số điện thoại chưa được đăng kí", Toast.LENGTH_SHORT)
                     .show()
