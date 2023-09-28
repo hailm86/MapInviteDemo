@@ -43,6 +43,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/5bfd3e19e3f0ee906c158d004e8623db/transformed/viewpager2-1.0.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/98b2b294891891baa1a7f27634aa4207/transformed/play-services-ads-20.6.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/dc9a59404bcbe0fbe7247b7fe83a2114/transformed/firebase-firestore-ktx-24.8.1-api.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/64d4ba48bf8ec92dbed6d8e8ff396cef/transformed/play-services-location-21.0.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/3a7fa5d037fc326a3988f25965bef19c/transformed/play-services-ads-lite-20.6.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/1342f20c9313e8db6a7140c0ba4bd4ac/transformed/play-services-ads-base-20.6.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/f1adfd66740d227e46448fd6c747d8e7/transformed/user-messaging-platform-1.0.0-api.jar</arg>
@@ -60,7 +61,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/ced9a770620c1464fdd653fdf1feec37/transformed/firebase-common-20.3.3-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/57c1347c1642f7bb28634998023ad972/transformed/firebase-database-collection-18.0.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/3433ba273622edda143c793a0fb43146/transformed/firebase-appcheck-interop-17.0.0-api.jar</arg>
-                <arg>$USER_HOME$/.gradle/caches/transforms-3/ae1bf3d44d74c08719dafed25e869885/transformed/play-services-base-18.0.1-api.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/fa8920d9f3fe4769d54d3b168b4507ee/transformed/play-services-base-18.1.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/b88a6a8e6e059edd76e7c44a8470017e/transformed/epoxy-paging-4.6.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/88551e003ab1f7fc6be7f46071a38081/transformed/epoxy-paging3-4.6.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/4d130cd30363674e9dfb1a4172cf8339/transformed/paging-runtime-3.0.0-alpha13-api.jar</arg>
@@ -411,7 +412,7 @@
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-measurement-base:21.3.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.ump:user-messaging-platform:1.0.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-appset:16.0.0@aar" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-base:18.0.1@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-base:18.1.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-tasks:18.0.2@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.legacy:legacy-support-v4:1.0.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.media:media:1.0.0@aar" level="project" />
@@ -436,6 +437,7 @@
     <orderEntry type="library" scope="TEST" name="Gradle: io.grpc:grpc-android:1.52.1@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.firebase:firebase-auth-interop:19.0.2@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-maps:18.1.0@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-location:21.0.1@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.arch.core:core-testing:2.1.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.test:runner:1.4.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.test:monitor:1.6.1@aar" level="project" />

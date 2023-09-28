@@ -4,6 +4,8 @@
     <!--    // Test ads-->
     <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
 
+    <string name="MAPS_API_KEY">AIzaSyAe7iKKBJBMsGBEWJnHjZ_HfYIJlegK3nc</string>
+
     <!-- navigation -->
     <string name="text.home">Trang chủ</string>
     <string name="text.community">Tập đọc</string>
