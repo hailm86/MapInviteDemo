@@ -1,4 +1,4 @@
-package com.hailm.mapinvitedemo.ui.map
+package com.hailm.mapinvitedemo.ui.zone_create
 
 import android.content.BroadcastReceiver
 import android.content.Context
