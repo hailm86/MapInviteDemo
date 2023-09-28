@@ -61,4 +61,20 @@
     <action
         android:id="@+id/action_global_inviteListFragment"
         app:destination="@id/inviteListFragment" />
+    <fragment
+        android:id="@+id/zoneAlertFragment"
+        android:name="com.hailm.mapinvitedemo.ui.zone_alert.ZoneAlertFragment"
+        android:label="fragment_zone_alert"
+        tools:layout="@layout/fragment_zone_alert" />
+    <action
+        android:id="@+id/action_global_zoneAlertFragment"
+        app:destination="@id/zoneAlertFragment" />
+    <fragment
+        android:id="@+id/createZoneFragment"
+        android:name="com.hailm.mapinvitedemo.ui.zone_create.CreateZoneFragment"
+        android:label="fragment_create_zone"
+        tools:layout="@layout/fragment_create_zone" />
+    <action
+        android:id="@+id/action_global_createZoneFragment"
+        app:destination="@id/createZoneFragment" />
 </navigation>
