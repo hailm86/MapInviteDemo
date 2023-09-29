@@ -31,14 +31,68 @@
         map:uiZoomControls="true" />
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <TextView
         android:id="@+id/createGeofenceButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/circle_background_safe"
+        android:gravity="center"
+        android:src="@drawable/ic_logo"
+        android:text="Create"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/btnSafe"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/circle_background_safe"
+        android:gravity="center"
         android:src="@drawable/ic_logo"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Safe"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/createGeofenceButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/btnDanger"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/circle_background_danger"
+        android:gravity="center"
+        android:src="@drawable/ic_logo"
+        android:text="Danger"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btnSafe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/btnOneTime"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="150dp"
+        android:background="@drawable/circle_background_one_time"
+        android:gravity="center"
+        android:src="@drawable/ic_logo"
+        android:text="OneTime"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btnDanger"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent" />
@@ -55,12 +109,24 @@
         app:layout_constraintEnd_toStartOf="@id/createGeofenceButton"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <EditText
+        android:id="@+id/edtZoneAlertName"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:background="@color/white"
+        android:hint="Zone Name"
+        android:imeOptions="actionDone"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintBottom_toTopOf="@id/statusTextView"
+        app:layout_constraintEnd_toStartOf="@id/btnSafe"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <View
         android:id="@+id/circleView"
         android:layout_width="320dp"
         android:layout_height="320dp"
         android:layout_gravity="center"
-        android:background="@drawable/circle_background"
+        android:background="@drawable/circle_background_safe"
         app:layout_constraintBottom_toBottomOf="@id/map"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

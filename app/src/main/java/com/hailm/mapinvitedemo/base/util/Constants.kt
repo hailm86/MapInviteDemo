@@ -21,6 +21,11 @@ object Constants {
     const val NOT_ACCEPT = "0"
     const val ACCEPT = "1"
 
+    const val ZONE_SAFE = "0"
+    const val ZONE_DANGER = "1"
+    const val ZONE_ONE_TIME = "2"
+
     const val USERS = "users"
     const val USER_INVITE = "invite_user"
+    const val ZONE_ALERT = "zone_alert"
 }

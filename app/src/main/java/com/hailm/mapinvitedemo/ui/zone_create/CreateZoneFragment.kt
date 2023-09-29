@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
@@ -22,19 +21,21 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
+import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
 import com.hailm.mapinvitedemo.base.extension.LocationUtils
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
+import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.FragmentCreateZoneBinding
 import com.hailm.mapinvitedemo.ui.map.GeofenceData
 import com.hailm.mapinvitedemo.ui.map.MapFragment
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapReadyCallback,
@@ -42,6 +43,9 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     private val mBinding by viewBinding(FragmentCreateZoneBinding::bind)
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
+
+    @Inject
+    lateinit var userProfileProvider: UserProfileProvider
 
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -51,6 +55,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private lateinit var geofencePendingIntent: PendingIntent
     private val markerListCenter = mutableListOf<Marker>()
     private val markerList = mutableListOf<Marker>()
+    private var zoneType = Constants.ZONE_SAFE
 
     private val geofenceData = GeofenceData(
         id = "geofence_id",
@@ -71,6 +76,12 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     }
 
     private fun initViewInstance() {
+        createZoneViewModel.addZoneAlert.observe(viewLifecycleOwner) {
+            if (it) {
+                Toast.makeText(context, "Thêm thành công", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         with(mBinding) {
             imgBack.setThrottleClickListener {
                 findNavController().popBackStack()
@@ -78,8 +89,40 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
             createGeofenceButton.setThrottleClickListener {
                 createGeofence()
+                if (edtZoneAlertName.text.toString().isNotEmpty()) {
+                    saveZoneToFirebase()
+                }
+            }
+
+            btnDanger.setThrottleClickListener {
+                zoneType = Constants.ZONE_DANGER
+                circleView.setBackgroundResource(R.drawable.circle_background_danger)
+            }
+
+            btnSafe.setThrottleClickListener {
+                zoneType = Constants.ZONE_SAFE
+                circleView.setBackgroundResource(R.drawable.circle_background_safe)
+            }
+
+            btnOneTime.setThrottleClickListener {
+                zoneType = Constants.ZONE_ONE_TIME
+                circleView.setBackgroundResource(R.drawable.circle_background_one_time)
             }
         }
+    }
+
+    private fun saveZoneToFirebase() {
+        val zoneName = mBinding.edtZoneAlertName.text.toString().trim()
+        val zoneData = hashMapOf(
+            "zoneName" to zoneName,
+            "zoneLat" to geofenceData.latitude.toString(),
+            "zoneLong" to geofenceData.longitude.toString(),
+            "zoneRadius" to geofenceData.radius.toString(),
+            "zonePhoneNumber" to userProfileProvider.userPhoneNumber.toString(),
+            "zoneType" to zoneType
+        )
+
+        createZoneViewModel.addZoneAlertToFirebase(zoneData)
     }
 
     private fun createGeofence() {
@@ -201,14 +244,14 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             geofenceData.longitude = centerLongitude
 
             // Vẽ vòng tròn từ tâm với bán kính
-            mMap.clear()
-            mMap.addCircle(
-                CircleOptions()
-                    .center(centerLatLng)
-                    .radius(geofenceData.radius.toDouble())
-                    .strokeColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    .fillColor(ContextCompat.getColor(context, R.color.random_2))
-            )
+//            mMap.clear()
+//            mMap.addCircle(
+//                CircleOptions()
+//                    .center(centerLatLng)
+//                    .radius(geofenceData.radius.toDouble())
+//                    .strokeColor(ContextCompat.getColor(context, R.color.colorPrimary))
+//                    .fillColor(ContextCompat.getColor(context, R.color.random_2))
+//            )
 
             // Gọi hàm xử lý với tọa độ trung tâm mới
             handleCameraMove(centerLatitude, centerLongitude)
