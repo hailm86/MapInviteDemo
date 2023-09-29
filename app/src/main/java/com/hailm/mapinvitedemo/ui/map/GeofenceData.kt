@@ -2,8 +2,8 @@ package com.hailm.mapinvitedemo.ui.map
 
 data class GeofenceData(
     val id: String,
-    val latitude: Double,
-    val longitude: Double,
+    var latitude: Double,
+    var longitude: Double,
     val radius: Float,
     val transitionTypes: Int
 )

@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
@@ -20,11 +22,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
+import com.hailm.mapinvitedemo.base.extension.LocationUtils
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.databinding.FragmentCreateZoneBinding
@@ -33,7 +37,8 @@ import com.hailm.mapinvitedemo.ui.map.MapFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapReadyCallback {
+class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapReadyCallback,
+    GoogleMap.OnMapClickListener {
 
     private val mBinding by viewBinding(FragmentCreateZoneBinding::bind)
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
@@ -44,7 +49,8 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private lateinit var geofencingClient: GeofencingClient
     private val geofenceList = mutableListOf<Geofence>()
     private lateinit var geofencePendingIntent: PendingIntent
-    private val markerListCenter = mutableListOf<Marker>() // Danh sách marker
+    private val markerListCenter = mutableListOf<Marker>()
+    private val markerList = mutableListOf<Marker>()
 
     private val geofenceData = GeofenceData(
         id = "geofence_id",
@@ -53,8 +59,10 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         radius = MapFragment.GEOFENCE_RADIUS,
         transitionTypes = Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT
     )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        createChannel(context)
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -63,7 +71,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     }
 
     private fun initViewInstance() {
-        with(mBinding){
+        with(mBinding) {
             imgBack.setThrottleClickListener {
                 findNavController().popBackStack()
             }
@@ -91,6 +99,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             .setTransitionTypes(geofenceData.transitionTypes)
             .build()
 
+        geofenceList.clear()
         geofenceList.add(geofence)
 
         val geofencingRequest = GeofencingRequest.Builder()
@@ -110,6 +119,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
             addOnSuccessListener {
                 mBinding.statusTextView.text = "Geofence created successfully"
+                Toast.makeText(context, "Geofences added", Toast.LENGTH_SHORT).show()
             }
             addOnFailureListener { e ->
                 mBinding.statusTextView.text = "Failed to create geofence"
@@ -134,6 +144,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.setOnMapClickListener(this)
         // Yêu cầu quyền truy cập vị trí nếu chưa có
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -186,6 +197,19 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             val centerLatitude = centerLatLng.latitude
             val centerLongitude = centerLatLng.longitude
 
+            geofenceData.latitude = centerLatitude
+            geofenceData.longitude = centerLongitude
+
+            // Vẽ vòng tròn từ tâm với bán kính
+            mMap.clear()
+            mMap.addCircle(
+                CircleOptions()
+                    .center(centerLatLng)
+                    .radius(geofenceData.radius.toDouble())
+                    .strokeColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .fillColor(ContextCompat.getColor(context, R.color.random_2))
+            )
+
             // Gọi hàm xử lý với tọa độ trung tâm mới
             handleCameraMove(centerLatitude, centerLongitude)
         }
@@ -208,8 +232,68 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         markerListCenter.clear()
     }
 
+    //removing a geofence
+    private fun removeGeofence() {
+
+//        geofencingClient.removeGeofences(geofencePendingIntent).run {
+//            addOnSuccessListener {
+//                Toast.makeText(context, "Geofences removed", Toast.LENGTH_SHORT).show()
+//
+//            }
+//            addOnFailureListener {
+//                Toast.makeText(context, "Failed to remove geofences", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeGeofence()
+    }
+
     companion object {
         private const val PERMISSIONS_REQUEST_LOCATION = 1000
         const val GEOFENCE_RADIUS = 4000.0f
+    }
+
+    override fun onMapClick(p0: LatLng) {
+        // Xóa tất cả các marker cũ
+        clearNewMarkers()
+        val marker = mMap.addMarker(MarkerOptions().position(p0).title("Click"))
+
+        // Lưu marker vào danh sách
+        markerList.add(marker!!)
+
+        if (isInsideGeofence(p0)) {
+            Toast.makeText(context, "Geofence User entered geofence", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Geofence User exited geofence", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun isInsideGeofence(newLatLng: LatLng): Boolean {
+        for (geofence in geofenceList) {
+            val geofenceLatLng = LatLng(geofenceData.latitude, geofenceData.longitude)
+
+            // Tính khoảng cách giữa tọa độ mới và tọa độ của geofence
+            val distance = LocationUtils.distanceBetween(newLatLng, geofenceLatLng)
+
+            if (distance <= geofence.radius) {
+                // Tọa độ mới nằm trong geofence
+                return true
+            }
+        }
+        // Tọa độ mới không nằm trong bất kỳ geofence nào
+        return false
+    }
+
+    private fun clearNewMarkers() {
+        // Lặp qua danh sách marker và xóa chúng khỏi bản đồ
+        for (marker in markerList) {
+            marker.remove()
+        }
+
+        // Xóa tất cả marker khỏi danh sách
+        markerList.clear()
     }
 }

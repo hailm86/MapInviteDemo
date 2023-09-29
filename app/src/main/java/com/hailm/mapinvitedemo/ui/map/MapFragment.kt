@@ -38,7 +38,7 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback {
         @JvmStatic
         private val TAG = HomeFragment::class.java.simpleName
         private const val PERMISSIONS_REQUEST_LOCATION = 1000
-        const val GEOFENCE_RADIUS = 4000.0f
+        const val GEOFENCE_RADIUS = 1500.0f
     }
 
     private val mBinding by viewBinding(FragmentMapBinding::bind)
@@ -72,15 +72,6 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback {
 
             mMap.isMyLocationEnabled = true // Hiển thị nút "My Location" trên bản đồ
             moveMapToCurrentLocation()
-
-            // Vẽ vòng tròn từ tâm với bán kính
-//            mMap.addCircle(
-//                CircleOptions()
-//                    .center(center)
-//                    .radius(geofenceData.radius.toDouble())
-//                    .strokeColor(ContextCompat.getColor(context, R.color.colorPrimary))
-//                    .fillColor(ContextCompat.getColor(context, R.color.random_6))
-//            )
 
         } else {
             // Yêu cầu quyền truy cập vị trí từ người dùng
