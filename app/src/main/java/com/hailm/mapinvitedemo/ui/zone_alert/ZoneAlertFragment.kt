@@ -14,6 +14,8 @@ import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
+import com.hailm.mapinvitedemo.base.model.ZoneAlert
+import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.FragmentZoneAlertBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,8 +49,12 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
                 adapter = zoneAlertAdapter
                 layoutManager = linearLayoutManagerZone
             }
-            zoneAlertAdapter.onClickItem = {
-                Toast.makeText(context, "Click", Toast.LENGTH_SHORT).show()
+            zoneAlertAdapter.onClickItem = { model ->
+                findNavController().navigate(
+                    NavMainDirections.actionGlobalCreateZoneFragment(
+                        Constants.FROM_ZONE_ALERT_EDIT, model
+                    )
+                )
             }
             zoneAlertViewModel.getAllZoneAlert()
 
@@ -58,7 +64,11 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
             }
 
             btnCreateZone.setThrottleClickListener {
-                findNavController().navigate(NavMainDirections.actionGlobalCreateZoneFragment())
+                findNavController().navigate(
+                    NavMainDirections.actionGlobalCreateZoneFragment(
+                        Constants.FROM_ZONE_ALERT_CREATE, ZoneAlert()
+                    )
+                )
             }
         }
     }

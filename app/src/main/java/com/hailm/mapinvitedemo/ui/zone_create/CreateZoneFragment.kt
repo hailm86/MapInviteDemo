@@ -12,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -43,6 +44,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     private val mBinding by viewBinding(FragmentCreateZoneBinding::bind)
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
+    private val mArgs by navArgs<CreateZoneFragmentArgs>()
 
     @Inject
     lateinit var userProfileProvider: UserProfileProvider
@@ -57,22 +59,51 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private val markerList = mutableListOf<Marker>()
     private var zoneType = Constants.ZONE_SAFE
 
-    private val geofenceData = GeofenceData(
-        id = "geofence_id",
-        latitude = 21.028215,
-        longitude = 105.723288,
-        radius = MapFragment.GEOFENCE_RADIUS,
-        transitionTypes = Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT
-    )
+    private lateinit var geofenceData: GeofenceData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         createChannel(context)
+        initialData()
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         geofencingClient = LocationServices.getGeofencingClient(context)
         initViewInstance()
+    }
+
+    private fun initialData() {
+        val initialLatitude = if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
+            21.028215
+        } else {
+            mArgs.zoneAlert.zoneLat
+        }
+
+        val initialLongtitude = if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
+            105.723288
+        } else {
+            mArgs.zoneAlert.zoneLong
+        }
+
+        geofenceData = GeofenceData(
+            id = "geofence_id",
+            latitude = initialLatitude.toString().toDouble(),
+            longitude = initialLongtitude.toString().toDouble(),
+            radius = MapFragment.GEOFENCE_RADIUS,
+            transitionTypes = Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT
+        )
+
+        if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_EDIT) {
+            val zoneAlert = mArgs.zoneAlert
+            when (zoneAlert.zoneType) {
+                Constants.ZONE_SAFE -> mBinding.circleView.setBackgroundResource(R.drawable.circle_background_safe)
+                Constants.ZONE_DANGER -> mBinding.circleView.setBackgroundResource(R.drawable.circle_background_danger)
+                Constants.ZONE_ONE_TIME -> mBinding.circleView.setBackgroundResource(R.drawable.circle_background_one_time)
+            }
+
+            mBinding.edtZoneAlertName.setText(zoneAlert.zoneName)
+            createZoneViewModel.getDocumentIdZoneAlert(zoneAlert)
+        }
     }
 
     private fun initViewInstance() {
@@ -89,9 +120,12 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
             createGeofenceButton.setThrottleClickListener {
                 createGeofence()
-                if (edtZoneAlertName.text.toString().isNotEmpty()) {
-                    saveZoneToFirebase()
+
+                if (edtZoneAlertName.text.toString().isEmpty()) {
+                    return@setThrottleClickListener
                 }
+
+                saveZoneToFirebase()
             }
 
             btnDanger.setThrottleClickListener {
@@ -122,39 +156,37 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             "zoneType" to zoneType
         )
 
-        createZoneViewModel.addZoneAlertToFirebase(zoneData)
+        if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
+            createZoneViewModel.addZoneAlertToFirebase(zoneData)
+        } else {
+            createZoneViewModel.addEditZoneAlertToFirebase(zoneData)
+        }
+
     }
 
     private fun createGeofence() {
-        val geofence = Geofence.Builder()
-            .setRequestId(geofenceData.id)
+        val geofence = Geofence.Builder().setRequestId(geofenceData.id)
             // Set the circular region of this geofence.
             .setCircularRegion(
-                geofenceData.latitude,
-                geofenceData.longitude,
-                geofenceData.radius
+                geofenceData.latitude, geofenceData.longitude, geofenceData.radius
             )
             // Set the expiration duration of the geofence. This geofence gets automatically
             // removed after this period of time.
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             // Set the transition types of interest. Alerts are only generated for these
             // transition. We track entry and exit transitions in this sample.
-            .setTransitionTypes(geofenceData.transitionTypes)
-            .build()
+            .setTransitionTypes(geofenceData.transitionTypes).build()
 
         geofenceList.clear()
         geofenceList.add(geofence)
 
-        val geofencingRequest = GeofencingRequest.Builder()
-            .addGeofences(geofenceList)
-            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            .build()
+        val geofencingRequest = GeofencingRequest.Builder().addGeofences(geofenceList)
+            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER).build()
 
         geofencePendingIntent = getGeofencePendingIntent()
 
         if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                context, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
@@ -173,10 +205,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private fun getGeofencePendingIntent(): PendingIntent {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
         return PendingIntent.getBroadcast(
-            requireContext(),
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
 
@@ -190,8 +219,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         mMap.setOnMapClickListener(this)
         // Yêu cầu quyền truy cập vị trí nếu chưa có
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true // Hiển thị nút "My Location" trên bản đồ
@@ -215,11 +243,9 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private fun moveMapToCurrentLocation() {
         // Lấy vị trí hiện tại của thiết bị
         if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                context, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                context, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
