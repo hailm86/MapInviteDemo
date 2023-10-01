@@ -33,6 +33,7 @@ import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.FragmentCreateZoneBinding
+import com.hailm.mapinvitedemo.ui.invite_list.UserInvite
 import com.hailm.mapinvitedemo.ui.map.GeofenceData
 import com.hailm.mapinvitedemo.ui.map.MapFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +46,8 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private val mBinding by viewBinding(FragmentCreateZoneBinding::bind)
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
     private val mArgs by navArgs<CreateZoneFragmentArgs>()
+    private lateinit var addMemberDialog: AddMemberDialog
+    private var memberList = arrayListOf<UserInvite>()
 
     @Inject
     lateinit var userProfileProvider: UserProfileProvider
@@ -103,6 +106,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
             mBinding.edtZoneAlertName.setText(zoneAlert.zoneName)
             createZoneViewModel.getDocumentIdZoneAlert(zoneAlert)
+            createZoneViewModel.getListMember()
         }
     }
 
@@ -111,6 +115,10 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             if (it) {
                 Toast.makeText(context, "Thêm thành công", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        createZoneViewModel.memberList.observe(viewLifecycleOwner) {
+            memberList = it
         }
 
         with(mBinding) {
@@ -141,6 +149,14 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             btnOneTime.setThrottleClickListener {
                 zoneType = Constants.ZONE_ONE_TIME
                 circleView.setBackgroundResource(R.drawable.circle_background_one_time)
+            }
+
+            btnAddMember.setThrottleClickListener {
+                addMemberDialog = AddMemberDialog.newInstance(memberList)
+                addMemberDialog.show(
+                    childFragmentManager,
+                    CreateZoneFragment::class.java.simpleName
+                )
             }
         }
     }

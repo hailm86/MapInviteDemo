@@ -5,19 +5,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.BaseViewModel
+import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
 import com.hailm.mapinvitedemo.base.util.Constants
+import com.hailm.mapinvitedemo.ui.invite_list.UserInvite
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateZoneViewModel @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val userProfileProvider: UserProfileProvider
 ) : BaseViewModel() {
     private val _addZoneAlert = MutableLiveData<Boolean>()
     val addZoneAlert: LiveData<Boolean> get() = _addZoneAlert
+
+    private val _memberList = MutableLiveData<ArrayList<UserInvite>>()
+    val memberList: LiveData<ArrayList<UserInvite>> get() = _memberList
 
     private var documentIdZoneAlert = ""
 
@@ -80,6 +86,30 @@ class CreateZoneViewModel @Inject constructor(
                 .addOnFailureListener { e ->
                     printLog(e)
                     _addZoneAlert.postValue(false)
+                }
+        }
+    }
+
+    fun getListMember() {
+        viewModelScope.launch {
+            firestore
+                .collection(Constants.USER_INVITE)
+                .whereEqualTo("userOne", userProfileProvider.userPhoneNumber)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        val dataList: ArrayList<UserInvite> = arrayListOf()
+                        for (document in documents) {
+                            val data = document.toObject(UserInvite::class.java)
+                            dataList.add(data)
+                        }
+
+                        printLog("====> $dataList")
+                        _memberList.value = dataList
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    printLog("Error getting documents: $exception")
                 }
         }
     }
