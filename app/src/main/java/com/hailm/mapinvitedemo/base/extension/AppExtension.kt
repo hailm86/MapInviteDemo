@@ -9,6 +9,8 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.maps.model.LatLng
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -29,45 +31,18 @@ fun printLog(message: Any?) {
     Log.d(builder.toString(), "#$message")
 }
 
-/**
- * Copy file from assets to internal storage
- */
-fun Context.copyAssets() {
-    val assetManager: AssetManager = assets
-    var files: Array<String>? = null
-    try {
-        files = assetManager.list("images")
-    } catch (e: IOException) {
-        e.printStackTrace()
+fun IsInsideGeofence(newLatLng: LatLng, radiusZone: Float): Boolean {
+    val geofenceLatLng = LatLng(newLatLng.latitude, newLatLng.longitude)
+
+    // Tính khoảng cách giữa tọa độ mới và tọa độ của geofence
+    val distance = LocationUtils.distanceBetween(newLatLng, geofenceLatLng)
+
+    if (distance <= radiusZone) {
+        // Tọa độ mới nằm trong geofence
+        return true
     }
-    if (files != null) {
-        for (filename in files) {
-            var `in`: InputStream? = null
-            var out: OutputStream? = null
-            try {
-                `in` = assetManager.open("images/$filename")
-                out =
-                    FileOutputStream(filesDir?.path + File.separator + filename)
-                copyFile(`in`, out)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } finally {
-                if (`in` != null) {
-                    try {
-                        `in`.close()
-                    } catch (e: IOException) {
-                    }
-                }
-                if (out != null) {
-                    try {
-                        out.flush()
-                        out.close()
-                    } catch (e: IOException) {
-                    }
-                }
-            }
-        }
-    }
+
+    return false
 }
 
 @Throws(IOException::class)

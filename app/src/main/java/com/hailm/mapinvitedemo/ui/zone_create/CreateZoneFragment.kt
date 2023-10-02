@@ -92,7 +92,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             id = "geofence_id",
             latitude = initialLatitude.toString().toDouble(),
             longitude = initialLongtitude.toString().toDouble(),
-            radius = MapFragment.GEOFENCE_RADIUS,
+            radius = GEOFENCE_RADIUS,
             transitionTypes = Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT
         )
 

@@ -61,6 +61,17 @@ class AddMemberBottomSheet : BottomSheetDialogFragment() {
             addMemberAdapter.memberList = it
         }
 
+        viewModel.hasZoneMember.observe(viewLifecycleOwner) {
+            if (!it.first) {
+                viewModel.addMemberToZone(
+                    it.second,
+                    dataReceived.toString(),
+                    "NameTest"
+                )
+                Toast.makeText(context, "add ${it.second}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         viewModel.getListMember()
 
         with(binding) {
@@ -74,8 +85,7 @@ class AddMemberBottomSheet : BottomSheetDialogFragment() {
             }
 
             addMemberAdapter.onAddMember = {
-                viewModel.addMemberToZone(it.userTwo.toString(), dataReceived.toString())
-                Toast.makeText(context, "add ${it.userTwo}", Toast.LENGTH_SHORT).show()
+                viewModel.checkHasPhoneNumber(dataReceived.toString(), it.userTwo.toString())
             }
 
             btnClose.setThrottleClickListener {

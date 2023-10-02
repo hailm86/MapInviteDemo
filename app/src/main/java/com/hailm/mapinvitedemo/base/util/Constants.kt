@@ -25,9 +25,11 @@ object Constants {
     const val ZONE_DANGER = "1"
     const val ZONE_ONE_TIME = "2"
 
+    // Table
     const val USERS = "users"
     const val USER_INVITE = "invite_user"
     const val ZONE_ALERT = "zone_alert"
+    const val ZONE_MEMBER = "zone_member"
 
     const val FROM_ZONE_ALERT_EDIT = "from_zone_alert_edit"
     const val FROM_ZONE_ALERT_CREATE = "from_zone_alert_create"
