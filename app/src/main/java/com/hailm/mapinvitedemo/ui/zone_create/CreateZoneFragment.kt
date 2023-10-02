@@ -156,7 +156,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     private fun saveZoneToFirebase() {
         val zoneName = mBinding.edtZoneAlertName.text.toString().trim()
-        val newUserIds = listOf("2", "3")
+        val newUserIds = listOf<String>()
         val zoneData = hashMapOf(
             "zoneName" to zoneName,
             "zoneLat" to geofenceData.latitude.toString(),

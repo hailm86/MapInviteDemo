@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.BaseViewModel
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
-import com.hailm.mapinvitedemo.base.extension.IsInsideGeofence
+import com.hailm.mapinvitedemo.base.extension.isInsideGeofence
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.helper.SingleLiveEvent
 import com.hailm.mapinvitedemo.base.model.User
@@ -53,24 +53,33 @@ class CreateZoneViewModel @Inject constructor(
             val documentRef =
                 firestore.collection(ZONE_ALERT).document(documentIdZoneAlert)
 
-            val updates = hashMapOf(
-                "zoneName" to zoneAlert["zoneName"] as Any,
-                "zoneLat" to zoneAlert["zoneLat"] as Any,
-                "zoneLong" to zoneAlert["zoneLong"] as Any,
-                "zoneRadius" to zoneAlert["zoneRadius"] as Any,
-                "zonePhoneNumber" to zoneAlert["zonePhoneNumber"] as Any,
-                "zoneType" to zoneAlert["zoneType"] as Any,
-                "zoneMember" to zoneAlert["zoneMember"] as Any
-            )
+            documentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val zoneMembers = documentSnapshot.get("zoneMember")
+                        val updates = hashMapOf(
+                            "zoneName" to zoneAlert["zoneName"],
+                            "zoneLat" to zoneAlert["zoneLat"],
+                            "zoneLong" to zoneAlert["zoneLong"],
+                            "zoneRadius" to zoneAlert["zoneRadius"],
+                            "zonePhoneNumber" to zoneAlert["zonePhoneNumber"],
+                            "zoneType" to zoneAlert["zoneType"],
+                            "zoneMember" to zoneMembers
+                        )
 
-            documentRef.update(updates)
-                .addOnSuccessListener {
-                    printLog("==> Add accept to fireStore success")
-                    _addZoneAlert.postValue(true)
+                        documentRef.update(updates)
+                            .addOnSuccessListener {
+                                printLog("==> Add accept to fireStore success")
+                                _addZoneAlert.postValue(true)
+                            }
+                            .addOnFailureListener { e ->
+                                printLog(e)
+                                _addZoneAlert.postValue(false)
+                            }
+                    }
                 }
                 .addOnFailureListener { e ->
-                    printLog(e)
-                    _addZoneAlert.postValue(false)
+                    // Xử lý lỗi nếu có
                 }
         }
     }
@@ -107,7 +116,6 @@ class CreateZoneViewModel @Inject constructor(
 
     fun addMemberToZone(memberPhone: String, documentIdZoneAlert: String, memberName: String) {
         viewModelScope.launch {
-            printLog("==> $documentIdZoneAlert")
             val areaRef =
                 firestore.collection(ZONE_ALERT).document(documentIdZoneAlert)
             areaRef.get()
@@ -144,15 +152,17 @@ class CreateZoneViewModel @Inject constructor(
         memberData: MemberData
     ) {
         viewModelScope.launch {
-            val isInsideGeofence = if (IsInsideGeofence(
-                    latLongMember,
-                    CreateZoneFragment.GEOFENCE_RADIUS
-                )
-            ) {
-                Constants.INSIDE
-            } else {
-                Constants.OUTSIDE
-            }
+//            val isInsideGeofence = if (isInsideGeofence(
+//                    latLongMember,
+//                    CreateZoneFragment.GEOFENCE_RADIUS
+//                )
+//            ) {
+//                Constants.INSIDE
+//            } else {
+//                Constants.OUTSIDE
+//            }
+
+            val isInsideGeofence = Constants.INSIDE
             val zoneMemberData = hashMapOf(
                 "documentIdZoneAlert" to memberData.documentIdZoneAlert,
                 "zoneMember" to memberData.zoneMember,
@@ -196,7 +206,7 @@ class CreateZoneViewModel @Inject constructor(
 
     fun checkHasPhoneNumber(documentIdZoneAlert: String, zoneMember: String) {
         firestore
-            .collection(Constants.ZONE_MEMBER)
+            .collection(ZONE_MEMBER)
             .whereEqualTo("documentIdZoneAlert", documentIdZoneAlert)
             .whereEqualTo("zoneMember", zoneMember)
             .get()

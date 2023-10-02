@@ -1,7 +1,6 @@
 package com.hailm.mapinvitedemo.base.extension
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -9,10 +8,8 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.Geofence
 import com.google.android.gms.maps.model.LatLng
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -31,11 +28,9 @@ fun printLog(message: Any?) {
     Log.d(builder.toString(), "#$message")
 }
 
-fun IsInsideGeofence(newLatLng: LatLng, radiusZone: Float): Boolean {
-    val geofenceLatLng = LatLng(newLatLng.latitude, newLatLng.longitude)
-
+fun isInsideGeofence(currentLatLng: LatLng, latLngZone: LatLng, radiusZone: Float): Boolean {
     // Tính khoảng cách giữa tọa độ mới và tọa độ của geofence
-    val distance = LocationUtils.distanceBetween(newLatLng, geofenceLatLng)
+    val distance = LocationUtils.distanceBetween(currentLatLng, latLngZone)
 
     if (distance <= radiusZone) {
         // Tọa độ mới nằm trong geofence

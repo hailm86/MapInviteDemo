@@ -58,6 +58,11 @@
             android:value="@string/app_id" />
 
         <receiver android:name=".ui.zone_create.GeofenceBroadcastReceiver"/>
+
+        <service
+            android:name=".service.LocationTrackingService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
