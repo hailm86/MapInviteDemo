@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/tvPhoneInvite"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textSize="14sp"
@@ -29,14 +29,15 @@
         app:layout_constraintEnd_toStartOf="@id/nameSg"
         app:layout_constraintStart_toEndOf="@id/tvStt"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="0355303878" />
+        tools:text="1" />
 
     <EditText
         android:id="@+id/nameSg"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@drawable/bg_edittext"
         android:hint="Name"
+        android:minWidth="100dp"
         android:padding="5dp"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,13 +45,12 @@
         app:layout_constraintStart_toEndOf="@id/tvPhoneInvite"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/bg_edittext"
-        android:padding="8dp"
+        android:background="@drawable/bg_accept"
         android:text="Add"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

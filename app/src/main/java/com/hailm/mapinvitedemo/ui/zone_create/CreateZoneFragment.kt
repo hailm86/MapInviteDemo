@@ -46,8 +46,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private val mBinding by viewBinding(FragmentCreateZoneBinding::bind)
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
     private val mArgs by navArgs<CreateZoneFragmentArgs>()
-    private lateinit var addMemberDialog: AddMemberDialog
-    private var memberList = arrayListOf<UserInvite>()
+    private lateinit var bottomSheet: AddMemberBottomSheet
 
     @Inject
     lateinit var userProfileProvider: UserProfileProvider
@@ -72,6 +71,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         geofencingClient = LocationServices.getGeofencingClient(context)
+        bottomSheet = AddMemberBottomSheet()
         initViewInstance()
     }
 
@@ -105,8 +105,6 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             }
 
             mBinding.edtZoneAlertName.setText(zoneAlert.zoneName)
-            createZoneViewModel.getDocumentIdZoneAlert(zoneAlert)
-            createZoneViewModel.getListMember()
         }
     }
 
@@ -115,10 +113,6 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             if (it) {
                 Toast.makeText(context, "Thêm thành công", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        createZoneViewModel.memberList.observe(viewLifecycleOwner) {
-            memberList = it
         }
 
         with(mBinding) {
@@ -152,30 +146,34 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             }
 
             btnAddMember.setThrottleClickListener {
-                addMemberDialog = AddMemberDialog.newInstance(memberList)
-                addMemberDialog.show(
-                    childFragmentManager,
-                    CreateZoneFragment::class.java.simpleName
-                )
+                val bundle = Bundle()
+                bundle.putString("documentId", mArgs.zoneAlert.documentId)
+                bottomSheet.arguments = bundle
+                bottomSheet.show(childFragmentManager, TAG)
             }
         }
     }
 
     private fun saveZoneToFirebase() {
         val zoneName = mBinding.edtZoneAlertName.text.toString().trim()
+        val newUserIds = listOf("2", "3")
         val zoneData = hashMapOf(
             "zoneName" to zoneName,
             "zoneLat" to geofenceData.latitude.toString(),
             "zoneLong" to geofenceData.longitude.toString(),
             "zoneRadius" to geofenceData.radius.toString(),
             "zonePhoneNumber" to userProfileProvider.userPhoneNumber.toString(),
-            "zoneType" to zoneType
+            "zoneType" to zoneType,
+            "zoneMember" to newUserIds
         )
 
         if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
             createZoneViewModel.addZoneAlertToFirebase(zoneData)
         } else {
-            createZoneViewModel.addEditZoneAlertToFirebase(zoneData)
+            createZoneViewModel.addEditZoneAlertToFirebase(
+                zoneData,
+                mArgs.zoneAlert.documentId.toString()
+            )
         }
 
     }
@@ -331,16 +329,6 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 //        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        removeGeofence()
-    }
-
-    companion object {
-        private const val PERMISSIONS_REQUEST_LOCATION = 1000
-        const val GEOFENCE_RADIUS = 4000.0f
-    }
-
     override fun onMapClick(p0: LatLng) {
         // Xóa tất cả các marker cũ
         clearNewMarkers()
@@ -380,5 +368,17 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
         // Xóa tất cả marker khỏi danh sách
         markerList.clear()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        removeGeofence()
+    }
+
+    companion object {
+        @JvmStatic
+        private val TAG = CreateZoneFragment::class.java.simpleName
+        private const val PERMISSIONS_REQUEST_LOCATION = 1000
+        const val GEOFENCE_RADIUS = 4000.0f
     }
 }

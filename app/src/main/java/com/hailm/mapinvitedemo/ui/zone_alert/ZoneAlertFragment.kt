@@ -66,7 +66,7 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
             btnCreateZone.setThrottleClickListener {
                 findNavController().navigate(
                     NavMainDirections.actionGlobalCreateZoneFragment(
-                        Constants.FROM_ZONE_ALERT_CREATE, ZoneAlert()
+                        Constants.FROM_ZONE_ALERT_CREATE, ZoneAlertUiModel()
                     )
                 )
             }

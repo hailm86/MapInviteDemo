@@ -17,7 +17,7 @@ class ZoneViewHolder constructor(
             ZoneViewHolder(ItemZoneBinding.inflate(inflater, parent, false))
     }
 
-    fun bind(model: ZoneAlert, onClickItem: OnClickItem?) {
+    fun bind(model: ZoneAlertUiModel, onClickItem: OnClickItem?) {
         with(binding) {
             tvZoneName.text = model.zoneName
 

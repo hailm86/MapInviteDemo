@@ -31,4 +31,7 @@ object Constants {
 
     const val FROM_ZONE_ALERT_EDIT = "from_zone_alert_edit"
     const val FROM_ZONE_ALERT_CREATE = "from_zone_alert_create"
+
+    const val INSIDE = "0"
+    const val OUTSIDE = "1"
 }

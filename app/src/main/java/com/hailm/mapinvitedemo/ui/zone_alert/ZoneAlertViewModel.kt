@@ -19,8 +19,8 @@ class ZoneAlertViewModel @Inject constructor(
     private val userProfileProvider: UserProfileProvider
 ) : BaseViewModel() {
 
-    private val _zoneAlertList = MutableLiveData<List<ZoneAlert>>()
-    val zoneAlertList: LiveData<List<ZoneAlert>> get() = _zoneAlertList
+    private val _zoneAlertList = MutableLiveData<List<ZoneAlertUiModel>>()
+    val zoneAlertList: LiveData<List<ZoneAlertUiModel>> get() = _zoneAlertList
 
     fun getAllZoneAlert() {
         viewModelScope.launch {
@@ -30,10 +30,19 @@ class ZoneAlertViewModel @Inject constructor(
                 .get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
-                        val dataList: MutableList<ZoneAlert> = mutableListOf()
+                        val dataList: MutableList<ZoneAlertUiModel> = mutableListOf()
                         for (document in documents) {
                             val data = document.toObject(ZoneAlert::class.java)
-                            dataList.add(data)
+                            val zoneAlertUiModel = ZoneAlertUiModel(
+                                data.zoneName,
+                                data.zoneLat,
+                                data.zoneLong,
+                                data.zoneRadius,
+                                data.zonePhoneNumber,
+                                data.zoneType,
+                                document.id
+                            )
+                            dataList.add(zoneAlertUiModel)
                         }
 
                         _zoneAlertList.value = dataList

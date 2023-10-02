@@ -79,7 +79,7 @@
             app:argType="string" />
         <argument
             android:name="zoneAlert"
-            app:argType="com.hailm.mapinvitedemo.base.model.ZoneAlert" />
+            app:argType="com.hailm.mapinvitedemo.ui.zone_alert.ZoneAlertUiModel" />
     </fragment>
     <action
         android:id="@+id/action_global_createZoneFragment"

@@ -9,7 +9,9 @@ import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
 import com.hailm.mapinvitedemo.base.util.Constants
+import com.hailm.mapinvitedemo.base.util.Constants.ZONE_ALERT
 import com.hailm.mapinvitedemo.ui.invite_list.UserInvite
+import com.hailm.mapinvitedemo.ui.invite_list.UserInviteUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,14 +24,12 @@ class CreateZoneViewModel @Inject constructor(
     private val _addZoneAlert = MutableLiveData<Boolean>()
     val addZoneAlert: LiveData<Boolean> get() = _addZoneAlert
 
-    private val _memberList = MutableLiveData<ArrayList<UserInvite>>()
-    val memberList: LiveData<ArrayList<UserInvite>> get() = _memberList
+    private val _memberList = MutableLiveData<ArrayList<UserInviteUiModel>>()
+    val memberList: LiveData<ArrayList<UserInviteUiModel>> get() = _memberList
 
-    private var documentIdZoneAlert = ""
-
-    fun addZoneAlertToFirebase(zoneAlert: HashMap<String, String>) {
+    fun addZoneAlertToFirebase(zoneAlert: HashMap<String, Any>) {
         viewModelScope.launch {
-            firestore.collection(Constants.ZONE_ALERT).add(zoneAlert)
+            firestore.collection(ZONE_ALERT).add(zoneAlert)
                 .addOnSuccessListener { documentReference ->
                     printLog("Document added with ID: ${documentReference.id}")
                     _addZoneAlert.postValue(true)
@@ -41,33 +41,10 @@ class CreateZoneViewModel @Inject constructor(
         }
     }
 
-    fun getDocumentIdZoneAlert(zoneAlertOld: ZoneAlert) {
-        viewModelScope.launch {
-            firestore
-                .collection(Constants.ZONE_ALERT)
-                .whereEqualTo("zoneName", zoneAlertOld.zoneName)
-                .whereEqualTo("zoneLat", zoneAlertOld.zoneLat)
-                .whereEqualTo("zoneLong", zoneAlertOld.zoneLong)
-                .whereEqualTo("zoneRadius", zoneAlertOld.zoneRadius)
-                .whereEqualTo("zonePhoneNumber", zoneAlertOld.zonePhoneNumber)
-                .whereEqualTo("zoneType", zoneAlertOld.zoneType)
-                .get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        documentIdZoneAlert = document.id
-                    }
-
-                }
-                .addOnFailureListener { exception ->
-                    printLog("Error getting documents: $exception")
-                }
-        }
-    }
-
-    fun addEditZoneAlertToFirebase(zoneAlert: HashMap<String, String>) {
+    fun addEditZoneAlertToFirebase(zoneAlert: HashMap<String, Any>, documentIdZoneAlert: String) {
         viewModelScope.launch {
             val documentRef =
-                firestore.collection(Constants.ZONE_ALERT).document(documentIdZoneAlert)
+                firestore.collection(ZONE_ALERT).document(documentIdZoneAlert)
 
             val updates = hashMapOf(
                 "zoneName" to zoneAlert["zoneName"] as Any,
@@ -76,6 +53,7 @@ class CreateZoneViewModel @Inject constructor(
                 "zoneRadius" to zoneAlert["zoneRadius"] as Any,
                 "zonePhoneNumber" to zoneAlert["zonePhoneNumber"] as Any,
                 "zoneType" to zoneAlert["zoneType"] as Any,
+                "zoneMember" to zoneAlert["zoneMember"] as Any
             )
 
             documentRef.update(updates)
@@ -98,10 +76,16 @@ class CreateZoneViewModel @Inject constructor(
                 .get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
-                        val dataList: ArrayList<UserInvite> = arrayListOf()
+                        val dataList: ArrayList<UserInviteUiModel> = arrayListOf()
                         for (document in documents) {
                             val data = document.toObject(UserInvite::class.java)
-                            dataList.add(data)
+                            val userInviteUiModel = UserInviteUiModel(
+                                data.userOne,
+                                data.userTwo,
+                                data.status,
+                                document.id
+                            )
+                            dataList.add(userInviteUiModel)
                         }
 
                         printLog("====> $dataList")
@@ -110,6 +94,36 @@ class CreateZoneViewModel @Inject constructor(
                 }
                 .addOnFailureListener { exception ->
                     printLog("Error getting documents: $exception")
+                }
+        }
+    }
+
+    fun addMemberToZone(memberPhone: String, documentIdZoneAlert: String) {
+        viewModelScope.launch {
+            printLog("==> $documentIdZoneAlert")
+            val areaRef =
+                firestore.collection(ZONE_ALERT).document(documentIdZoneAlert)
+            areaRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val existingUserIds =
+                            documentSnapshot.get("zoneMember") as? List<String> ?: emptyList()
+                        val updatedUserIds = existingUserIds.toMutableList()
+                        if (!updatedUserIds.contains(memberPhone)) {
+                            updatedUserIds.add(memberPhone)
+                        }
+
+                        areaRef.update("zoneMember", updatedUserIds)
+                            .addOnSuccessListener {
+                                // Người dùng đã được thêm vào khu vực (Area) thành công
+                            }
+                            .addOnFailureListener { e ->
+                                // Xử lý lỗi nếu có
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    // Xử lý lỗi nếu có
                 }
         }
     }
