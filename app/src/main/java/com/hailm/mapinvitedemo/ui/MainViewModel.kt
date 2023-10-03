@@ -1,10 +1,19 @@
 package com.hailm.mapinvitedemo.ui
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
+import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseViewModel
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
 import com.hailm.mapinvitedemo.base.extension.isInsideGeofence
@@ -127,12 +136,22 @@ class MainViewModel @Inject constructor(
                                     "Đối tượng đã vào trong vùng theo dõi ($zoneName) ",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                showNotification(
+                                    context!!,
+                                    "Test",
+                                    "Đối tượng đã vào trong vùng theo dõi ($zoneName) "
+                                )
                             } else {
                                 Toast.makeText(
                                     context,
                                     "Đối tượng đã ra khỏi trong vùng theo dõi ($zoneName)",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                                showNotification(
+                                    context!!,
+                                    "Test",
+                                    "Đối tượng đã ra khỏi trong vùng theo dõi ($zoneName)"
+                                )
                             }
                         }
 
@@ -151,5 +170,45 @@ class MainViewModel @Inject constructor(
                 }
 
         }
+    }
+
+    private fun showNotification(context: Context, title: String, message: String) {
+        // Khởi tạo NotificationManagerCompat để quản lý thông báo
+        val notificationManager = NotificationManagerCompat.from(context)
+
+        // Kiểm tra phiên bản Android, vì từ Android 8.0 trở lên cần tạo Notification Channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "my_channel_id"
+            val channelName = "My Channel"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, channelName, importance)
+
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Tạo một NotificationCompat.Builder để xây dựng thông báo
+        val builder = NotificationCompat.Builder(context, "my_channel_id")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        // Hiển thị thông báo bằng cách gọi notify() trên NotificationManagerCompat
+        val notificationId = 1 // ID duy nhất cho mỗi thông báo
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        notificationManager.notify(notificationId, builder.build())
     }
 }
