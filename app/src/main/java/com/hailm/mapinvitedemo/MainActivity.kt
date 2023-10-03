@@ -56,7 +56,6 @@ class MainActivity : BaseActivity() {
         val navView: BottomNavigationView = binding.bottomAppBar
         navView.itemIconTintList = null
         navView.setupWithNavController(navController)
-
         navController.addOnDestinationChangedListener { _, destination, args ->
             currentFragmentId = destination.id
             hideSoftKeyboard()

@@ -71,7 +71,6 @@ class MainViewModel @Inject constructor(
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
                         for (document in documents) {
-                            printLog("getZoneMemberId => $zoneAlertUiModel")
                             updateInOutZoneMember(
                                 document.id,
                                 currentLatLng,
@@ -79,6 +78,7 @@ class MainViewModel @Inject constructor(
                                     zoneAlertUiModel.zoneLat.toString().toDouble(),
                                     zoneAlertUiModel.zoneLong.toString().toDouble()
                                 ),
+                                zoneAlertUiModel.zoneName.toString(),
                                 context
                             )
                         }
@@ -94,20 +94,20 @@ class MainViewModel @Inject constructor(
         zoneMemberDocumentId: String,
         currentLatLng: LatLng,
         latLngZone: LatLng,
+        zoneName: String,
         context: Context?
     ) {
         viewModelScope.launch {
             val zoneMember =
                 firestore.collection(Constants.ZONE_MEMBER).document(zoneMemberDocumentId)
-
+            printLog("zoneMemberDocumentId==> $zoneMemberDocumentId")
             zoneMember.get()
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
-                        val isInsideGeofenceOld = documentSnapshot.get("isInsideGeofence")
-
                         printLog("currentLatLng => ${currentLatLng.latitude} -- ${currentLatLng.longitude}")
                         printLog("latLngZone => ${latLngZone.latitude} -- ${latLngZone.longitude}")
 
+                        val isInsideGeofenceOld = documentSnapshot.get("isInsideGeofence")
                         val isInside = isInsideGeofence(currentLatLng, latLngZone, GEOFENCE_RADIUS)
 
                         val isInsideGeofenceNew = if (isInside) {
@@ -121,39 +121,20 @@ class MainViewModel @Inject constructor(
                             isCheck = isInsideGeofenceOld.toString()
                         } else {
                             isCheck = isInsideGeofenceNew
-                            if (isInsideGeofenceNew == Constants.INSIDE) {
+                            if (isCheck == Constants.INSIDE) {
                                 Toast.makeText(
                                     context,
-                                    "Đối tượng đã vào trong vùng theo dõi",
+                                    "Đối tượng đã vào trong vùng theo dõi ($zoneName) ",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Đối tượng đã ra khỏi trong vùng theo dõi",
+                                    "Đối tượng đã ra khỏi trong vùng theo dõi ($zoneName)",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                         }
-
-//                        val isCheck = if (isInsideGeofenceOld == isInsideGeofenceNew) {
-//                            isInsideGeofenceOld
-//                        } else {
-//                            isInsideGeofenceNew
-//                            if (isInsideGeofenceNew == Constants.INSIDE) {
-//                                Toast.makeText(
-//                                    context,
-//                                    "Đối tượng đã vào trong vùng theo dõi",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                            } else {
-//                                Toast.makeText(
-//                                    context,
-//                                    "Đối tượng đã ra khỏi trong vùng theo dõi",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                            }
-//                        }
 
                         zoneMember.update("isInsideGeofence", isCheck)
                             .addOnSuccessListener {
