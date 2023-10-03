@@ -24,7 +24,7 @@ class AddMemberViewHolder constructor(
 
         if (model.status == Constants.ACCEPT) {
             binding.btnAdd.text = itemView.context.resources.getString(R.string.text_add)
-            binding.btnAdd.isClickable = false
+            binding.btnAdd.isClickable = true
             binding.btnAdd.setBackgroundResource(R.drawable.bg_accept)
         } else {
             binding.btnAdd.text = itemView.context.resources.getString(R.string.text_pending)
@@ -32,8 +32,10 @@ class AddMemberViewHolder constructor(
             binding.btnAdd.setBackgroundResource(R.drawable.bg_disable_button)
         }
 
-        binding.btnAdd.setThrottleClickListener {
-            onAddMember?.invoke(model)
+        if (binding.btnAdd.text == itemView.context.resources.getString(R.string.text_add)) {
+            binding.btnAdd.setThrottleClickListener {
+                onAddMember?.invoke(model)
+            }
         }
     }
 }

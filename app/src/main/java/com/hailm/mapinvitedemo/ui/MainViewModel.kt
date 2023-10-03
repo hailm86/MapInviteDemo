@@ -11,6 +11,7 @@ import com.hailm.mapinvitedemo.base.extension.isInsideGeofence
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
 import com.hailm.mapinvitedemo.base.util.Constants
+import com.hailm.mapinvitedemo.base.util.Constants.GEOFENCE_RADIUS
 import com.hailm.mapinvitedemo.ui.zone_alert.ZoneAlertUiModel
 import com.hailm.mapinvitedemo.ui.zone_create.CreateZoneFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -107,12 +108,7 @@ class MainViewModel @Inject constructor(
                         printLog("currentLatLng => ${currentLatLng.latitude} -- ${currentLatLng.longitude}")
                         printLog("latLngZone => ${latLngZone.latitude} -- ${latLngZone.longitude}")
 
-                        val isInside =
-                            isInsideGeofence(
-                                currentLatLng,
-                                latLngZone,
-                                CreateZoneFragment.GEOFENCE_RADIUS
-                            )
+                        val isInside = isInsideGeofence(currentLatLng, latLngZone, GEOFENCE_RADIUS)
 
                         val isInsideGeofenceNew = if (isInside) {
                             Constants.INSIDE

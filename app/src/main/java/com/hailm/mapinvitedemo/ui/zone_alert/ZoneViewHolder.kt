@@ -17,7 +17,7 @@ class ZoneViewHolder constructor(
             ZoneViewHolder(ItemZoneBinding.inflate(inflater, parent, false))
     }
 
-    fun bind(model: ZoneAlertUiModel, onClickItem: OnClickItem?) {
+    fun bind(model: ZoneAlertUiModel, onClickItem: OnClickItem?, onDeleteZone: OnDeleteZone?) {
         with(binding) {
             tvZoneName.text = model.zoneName
 
@@ -29,6 +29,10 @@ class ZoneViewHolder constructor(
 
             itemView.setThrottleClickListener {
                 onClickItem?.invoke(model)
+            }
+
+            btnDeleteZone.setThrottleClickListener {
+                onDeleteZone?.invoke(model)
             }
         }
     }

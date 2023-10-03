@@ -2,7 +2,6 @@ package com.hailm.mapinvitedemo.ui.zone_create
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -13,9 +12,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
-import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
+import com.hailm.mapinvitedemo.base.util.Constants.DOCUMENT_ID
+import com.hailm.mapinvitedemo.base.util.Constants.MEMBER_LIST
 import com.hailm.mapinvitedemo.databinding.BottomSheetAddMemberBinding
+import com.hailm.mapinvitedemo.ui.invite_list.UserInviteUiModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -55,24 +56,19 @@ class AddMemberBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun initViewInstance() {
-        val dataReceived = arguments?.getString("documentId")
-
-        viewModel.memberList.observe(viewLifecycleOwner) {
-            addMemberAdapter.memberList = it
-        }
+        val documentId = arguments?.getString(DOCUMENT_ID)
+        val memberList = arguments?.getParcelableArrayList<UserInviteUiModel>(MEMBER_LIST)
 
         viewModel.hasZoneMember.observe(viewLifecycleOwner) {
             if (!it.first) {
                 viewModel.addMemberToZone(
                     it.second,
-                    dataReceived.toString(),
+                    documentId.toString(),
                     "NameTest"
                 )
                 Toast.makeText(context, "add ${it.second}", Toast.LENGTH_SHORT).show()
             }
         }
-
-        viewModel.getListMember()
 
         with(binding) {
             addMemberAdapter = AddMemberAdapter()
@@ -83,9 +79,10 @@ class AddMemberBottomSheet : BottomSheetDialogFragment() {
                 adapter = addMemberAdapter
                 layoutManager = linearLayoutManager
             }
+            addMemberAdapter.memberList = memberList?.toList() ?: mutableListOf()
 
             addMemberAdapter.onAddMember = {
-                viewModel.checkHasPhoneNumber(dataReceived.toString(), it.userTwo.toString())
+                viewModel.checkHasPhoneNumber(documentId.toString(), it.userTwo.toString())
             }
 
             btnClose.setThrottleClickListener {

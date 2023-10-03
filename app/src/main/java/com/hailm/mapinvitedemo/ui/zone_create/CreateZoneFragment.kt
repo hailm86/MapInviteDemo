@@ -32,7 +32,11 @@ import com.hailm.mapinvitedemo.base.extension.LocationUtils
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.base.util.Constants
+import com.hailm.mapinvitedemo.base.util.Constants.DOCUMENT_ID
+import com.hailm.mapinvitedemo.base.util.Constants.GEOFENCE_RADIUS
+import com.hailm.mapinvitedemo.base.util.Constants.MEMBER_LIST
 import com.hailm.mapinvitedemo.databinding.FragmentCreateZoneBinding
+import com.hailm.mapinvitedemo.ui.invite_list.UserInviteUiModel
 import com.hailm.mapinvitedemo.ui.map.GeofenceData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -45,6 +49,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private val createZoneViewModel: CreateZoneViewModel by viewModels()
     private val mArgs by navArgs<CreateZoneFragmentArgs>()
     private lateinit var bottomSheet: AddMemberBottomSheet
+    private var currentZoom: Float = 0.0f
 
     @Inject
     lateinit var userProfileProvider: UserProfileProvider
@@ -60,6 +65,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private var zoneType = Constants.ZONE_SAFE
 
     private lateinit var geofenceData: GeofenceData
+    private var memberList = mutableListOf<UserInviteUiModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,6 +90,12 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             105.723288
         } else {
             mArgs.zoneAlert.zoneLong
+        }
+
+        currentZoom = if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
+            14f
+        } else {
+            mArgs.zoneAlert.currentZoom
         }
 
         geofenceData = GeofenceData(
@@ -114,6 +126,10 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             }
         }
 
+        createZoneViewModel.memberList.observe(viewLifecycleOwner) {
+            memberList = it
+        }
+        createZoneViewModel.getListMember()
         with(mBinding) {
             imgBack.setThrottleClickListener {
                 findNavController().popBackStack()
@@ -123,6 +139,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
                 createGeofence()
 
                 if (edtZoneAlertName.text.toString().isEmpty()) {
+                    Toast.makeText(context, "Please enter zoneName", Toast.LENGTH_SHORT).show()
                     return@setThrottleClickListener
                 }
 
@@ -146,7 +163,8 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
             btnAddMember.setThrottleClickListener {
                 val bundle = Bundle()
-                bundle.putString("documentId", mArgs.zoneAlert.documentId)
+                bundle.putString(DOCUMENT_ID, mArgs.zoneAlert.documentId)
+                bundle.putParcelableArrayList(MEMBER_LIST, ArrayList(memberList))
                 bottomSheet.arguments = bundle
                 bottomSheet.show(childFragmentManager, TAG)
             }
@@ -163,7 +181,8 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             "zoneRadius" to geofenceData.radius.toString(),
             "zonePhoneNumber" to userProfileProvider.userPhoneNumber.toString(),
             "zoneType" to zoneType,
-            "zoneMember" to newUserIds
+            "zoneMember" to newUserIds,
+            "currentZoom" to currentZoom
         )
 
         if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
@@ -237,8 +256,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             moveMapToCurrentLocation()
             // Đặt vị trí trung tâm bản đồ và zoom level
             val center = LatLng(geofenceData.latitude, geofenceData.longitude)
-            val zoomLevel = 14f
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, zoomLevel))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(center, currentZoom))
             handleCameraMoveCenter()
 
         } else {
@@ -271,8 +289,11 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     private fun handleCameraMoveCenter() {
         mMap.setOnCameraIdleListener {
-            // Đây là nơi bạn có thể đặt mã cần được thực thi khi bản đồ không còn di chuyển (chuyển động)
-            // Ví dụ: gửi tọa độ trung tâm mới đến một hàm xử lý
+            val newZoom = mMap.cameraPosition.zoom
+            if (newZoom != currentZoom) {
+                currentZoom = newZoom
+            }
+
             val centerLatLng = mMap.cameraPosition.target
             val centerLatitude = centerLatLng.latitude
             val centerLongitude = centerLatLng.longitude
@@ -376,6 +397,5 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         @JvmStatic
         private val TAG = CreateZoneFragment::class.java.simpleName
         private const val PERMISSIONS_REQUEST_LOCATION = 1000
-        const val GEOFENCE_RADIUS = 4000.0f
     }
 }

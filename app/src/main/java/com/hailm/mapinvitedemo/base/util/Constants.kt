@@ -36,4 +36,10 @@ object Constants {
 
     const val INSIDE = "0"
     const val OUTSIDE = "1"
+    const val GEOFENCE_RADIUS = 1000.0f
+
+
+    // Key bundle
+    const val DOCUMENT_ID = "document_dd"
+    const val MEMBER_LIST = "member_list"
 }

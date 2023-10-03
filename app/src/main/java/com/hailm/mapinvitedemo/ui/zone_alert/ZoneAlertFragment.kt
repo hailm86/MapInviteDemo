@@ -3,6 +3,7 @@ package com.hailm.mapinvitedemo.ui.zone_alert
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
@@ -14,7 +15,6 @@ import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
-import com.hailm.mapinvitedemo.base.model.ZoneAlert
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.FragmentZoneAlertBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +30,8 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
 
     private lateinit var zoneAlertAdapter: ZoneAlertAdapter
 
+    private var zoneAlertList = mutableListOf<ZoneAlertUiModel>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewInstance()
@@ -37,8 +39,16 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
 
     private fun initViewInstance() {
         zoneAlertViewModel.zoneAlertList.observe(viewLifecycleOwner) {
-            zoneAlertAdapter.zoneAlertList = it
+            zoneAlertList.clear()
+            zoneAlertList.addAll(it)
+            zoneAlertAdapter.zoneAlertList = zoneAlertList
             zoneAlertAdapter.notifyItemRangeChanged(0, it.size)
+        }
+        zoneAlertViewModel.deleteZoneSuccess.observe(viewLifecycleOwner) { pos ->
+            if (pos != -1) {
+                zoneAlertList.removeAt(pos)
+                zoneAlertAdapter.notifyItemRemoved(pos)
+            }
         }
 
         with(mBinding) {
@@ -56,6 +66,9 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
                     )
                 )
             }
+            zoneAlertAdapter.onDeleteZone = {
+                showDeleteConfirmationDialog(it)
+            }
             zoneAlertViewModel.getAllZoneAlert()
 
 
@@ -71,6 +84,25 @@ class ZoneAlertFragment : BaseFragment(R.layout.fragment_zone_alert) {
                 )
             }
         }
+    }
+
+    private fun showDeleteConfirmationDialog(zoneData: ZoneAlertUiModel) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+
+        alertDialogBuilder.setTitle("Xác nhận xóa")
+        alertDialogBuilder.setMessage("Bạn có chắc chắn muốn xóa mục zone ${zoneData.zoneName}?")
+
+        alertDialogBuilder.setPositiveButton("Yes") { dialog, _ ->
+            zoneAlertViewModel.deleteZone(zoneData)
+            dialog.dismiss()
+        }
+
+        alertDialogBuilder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
     override val viewModelList: List<ViewModel>
