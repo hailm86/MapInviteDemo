@@ -85,7 +85,7 @@ class MainActivity : BaseActivity() {
                 val longitude = intent.getDoubleExtra("longitude", 0.0)
                 // Process location data here
                 printLog("LocationUpdated ==> $latitude -- $longitude")
-                mainViewModel.getListZone(LatLng(latitude, longitude))
+                mainViewModel.getListZone(LatLng(latitude, longitude), context)
             }
         }
     }

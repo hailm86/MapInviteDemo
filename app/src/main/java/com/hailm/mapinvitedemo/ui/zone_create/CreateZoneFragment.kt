@@ -33,9 +33,7 @@ import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.FragmentCreateZoneBinding
-import com.hailm.mapinvitedemo.ui.invite_list.UserInvite
 import com.hailm.mapinvitedemo.ui.map.GeofenceData
-import com.hailm.mapinvitedemo.ui.map.MapFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -112,6 +110,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         createZoneViewModel.addZoneAlert.observe(viewLifecycleOwner) {
             if (it) {
                 Toast.makeText(context, "Thêm thành công", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
             }
         }
 
@@ -207,11 +206,9 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         }
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
             addOnSuccessListener {
-                mBinding.statusTextView.text = "Geofence created successfully"
                 Toast.makeText(context, "Geofences added", Toast.LENGTH_SHORT).show()
             }
             addOnFailureListener { e ->
-                mBinding.statusTextView.text = "Failed to create geofence"
             }
         }
     }
@@ -219,7 +216,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
     private fun getGeofencePendingIntent(): PendingIntent {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
         return PendingIntent.getBroadcast(
-            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE
         )
     }
 

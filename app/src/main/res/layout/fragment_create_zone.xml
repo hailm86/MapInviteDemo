@@ -123,18 +123,6 @@
             app:layout_constraintHorizontal_bias="1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/statusTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="20dp"
-        android:text="Status: "
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/createGeofenceButton"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <View
         android:id="@+id/circleView"
         android:layout_width="320dp"

@@ -1,5 +1,7 @@
 package com.hailm.mapinvitedemo.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,7 +24,7 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel() {
 
 
-    fun getListZone(currentLatLng: LatLng) {
+    fun getListZone(currentLatLng: LatLng, context: Context?) {
         viewModelScope.launch {
             val currentPhone = userProfileProvider.userPhoneNumber
 
@@ -45,7 +47,7 @@ class MainViewModel @Inject constructor(
                             )
                             zoneAlertUiModels.add(zoneAlertUiModel)
                         }
-                        getZoneMemberId(zoneAlertUiModels, currentLatLng)
+                        getZoneMemberId(zoneAlertUiModels, currentLatLng, context)
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -54,7 +56,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun getZoneMemberId(zoneAlertUiModels: List<ZoneAlertUiModel>, currentLatLng: LatLng) {
+    private fun getZoneMemberId(
+        zoneAlertUiModels: List<ZoneAlertUiModel>,
+        currentLatLng: LatLng,
+        context: Context?
+    ) {
         for (zoneAlertUiModel in zoneAlertUiModels) {
             val zoneMember = firestore.collection(Constants.ZONE_MEMBER)
             zoneMember
@@ -71,7 +77,8 @@ class MainViewModel @Inject constructor(
                                 LatLng(
                                     zoneAlertUiModel.zoneLat.toString().toDouble(),
                                     zoneAlertUiModel.zoneLong.toString().toDouble()
-                                )
+                                ),
+                                context
                             )
                         }
                     }
@@ -85,7 +92,8 @@ class MainViewModel @Inject constructor(
     private fun updateInOutZoneMember(
         zoneMemberDocumentId: String,
         currentLatLng: LatLng,
-        latLngZone: LatLng
+        latLngZone: LatLng,
+        context: Context?
     ) {
         viewModelScope.launch {
             val zoneMember =
@@ -112,11 +120,44 @@ class MainViewModel @Inject constructor(
                             Constants.OUTSIDE
                         }
 
-                        val isCheck = if (isInsideGeofenceOld == isInsideGeofenceNew) {
-                            isInsideGeofenceOld
+                        val isCheck: String
+                        if (isInsideGeofenceOld == isInsideGeofenceNew) {
+                            isCheck = isInsideGeofenceOld.toString()
                         } else {
-                            isInsideGeofenceNew
+                            isCheck = isInsideGeofenceNew
+                            if (isInsideGeofenceNew == Constants.INSIDE) {
+                                Toast.makeText(
+                                    context,
+                                    "Đối tượng đã vào trong vùng theo dõi",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Đối tượng đã ra khỏi trong vùng theo dõi",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
+
+//                        val isCheck = if (isInsideGeofenceOld == isInsideGeofenceNew) {
+//                            isInsideGeofenceOld
+//                        } else {
+//                            isInsideGeofenceNew
+//                            if (isInsideGeofenceNew == Constants.INSIDE) {
+//                                Toast.makeText(
+//                                    context,
+//                                    "Đối tượng đã vào trong vùng theo dõi",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            } else {
+//                                Toast.makeText(
+//                                    context,
+//                                    "Đối tượng đã ra khỏi trong vùng theo dõi",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        }
 
                         zoneMember.update("isInsideGeofence", isCheck)
                             .addOnSuccessListener {
