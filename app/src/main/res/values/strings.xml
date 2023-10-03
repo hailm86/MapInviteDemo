@@ -21,4 +21,7 @@
 
     // Date string
     <string name="sdf_ymd_w_hm">yyyy年MM月dd日(E)\nah:mm</string>
+
+    <string name="text.add">Add</string>
+    <string name="text.pending">Pending</string>
 </resources>

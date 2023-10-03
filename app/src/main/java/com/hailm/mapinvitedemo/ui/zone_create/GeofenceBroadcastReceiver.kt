@@ -1,8 +1,10 @@
 package com.hailm.mapinvitedemo.ui.zone_create
 
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -31,6 +33,13 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 // Người dùng đã đi vào khu vực địa lý
                 printLog("Geofence User entered geofence")
                 // Thực hiện các hành động bạn muốn ở đây khi người dùng đi vào khu vực
+                // Creating and sending Notification
+                val notificationManager = ContextCompat.getSystemService(
+                    context!!,
+                    NotificationManager::class.java
+                ) as NotificationManager
+
+                notificationManager.sendGeofenceEnteredNotification(context)
             }
 
             Geofence.GEOFENCE_TRANSITION_EXIT -> {

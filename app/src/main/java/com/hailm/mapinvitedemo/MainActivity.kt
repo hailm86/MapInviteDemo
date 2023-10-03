@@ -1,18 +1,30 @@
 package com.hailm.mapinvitedemo
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.BaseActivity
+import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.base.model.constant.AppFragmentType
 import com.hailm.mapinvitedemo.databinding.ActivityMainBinding
+import com.hailm.mapinvitedemo.service.LocationTrackingService
+import com.hailm.mapinvitedemo.ui.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -23,6 +35,10 @@ class MainActivity : BaseActivity() {
     }
 
     private val binding by viewBinding(ActivityMainBinding::inflate)
+    private val mainViewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var firestore: FirebaseFirestore
 
     private val navController: NavController
         get() = findNavController(R.id.nav_host_fragment_activity_main)
@@ -40,7 +56,6 @@ class MainActivity : BaseActivity() {
         val navView: BottomNavigationView = binding.bottomAppBar
         navView.itemIconTintList = null
         navView.setupWithNavController(navController)
-
         navController.addOnDestinationChangedListener { _, destination, args ->
             currentFragmentId = destination.id
             hideSoftKeyboard()
@@ -56,5 +71,35 @@ class MainActivity : BaseActivity() {
 
             }
         }
+
+        val serviceIntent = Intent(this, LocationTrackingService::class.java)
+        startService(serviceIntent)
+
     }
+
+    private val locationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "LocationUpdated") {
+                val latitude = intent.getDoubleExtra("latitude", 0.0)
+                val longitude = intent.getDoubleExtra("longitude", 0.0)
+                // Process location data here
+                printLog("LocationUpdated ==> $latitude -- $longitude")
+                mainViewModel.getListZone(LatLng(latitude, longitude), context)
+            }
+        }
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    override fun onResume() {
+        super.onResume()
+        val filter = IntentFilter("LocationUpdated")
+        filter.priority = IntentFilter.SYSTEM_HIGH_PRIORITY // Add this line
+        registerReceiver(locationReceiver, filter, null, null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(locationReceiver)
+    }
+
 }

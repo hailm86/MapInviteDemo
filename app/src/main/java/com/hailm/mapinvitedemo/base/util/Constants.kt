@@ -21,6 +21,25 @@ object Constants {
     const val NOT_ACCEPT = "0"
     const val ACCEPT = "1"
 
+    const val ZONE_SAFE = "0"
+    const val ZONE_DANGER = "1"
+    const val ZONE_ONE_TIME = "2"
+
+    // Table
     const val USERS = "users"
     const val USER_INVITE = "invite_user"
+    const val ZONE_ALERT = "zone_alert"
+    const val ZONE_MEMBER = "zone_member"
+
+    const val FROM_ZONE_ALERT_EDIT = "from_zone_alert_edit"
+    const val FROM_ZONE_ALERT_CREATE = "from_zone_alert_create"
+
+    const val INSIDE = "0"
+    const val OUTSIDE = "1"
+    const val GEOFENCE_RADIUS = 1000.0f
+
+
+    // Key bundle
+    const val DOCUMENT_ID = "document_dd"
+    const val MEMBER_LIST = "member_list"
 }
