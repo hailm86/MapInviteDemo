@@ -15,7 +15,7 @@ buildscript {
         epoxyVersion = '4.6.2'
         flowbindingVersion = "1.2.0"
         coroutinesAndroidVersion = "1.7.1"
-        okHttpVersion = '4.9.0'
+        okHttpVersion = '4.9.1'
         retrofitVersion = '2.9.0'
         roomVersion = "2.5.0"
         threeTenAbpVersion = "1.2.4"
