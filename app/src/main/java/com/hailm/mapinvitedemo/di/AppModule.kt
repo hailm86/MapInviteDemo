@@ -7,6 +7,9 @@ import androidx.security.crypto.MasterKey
 import androidx.security.crypto.MasterKeys
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.cloud.AppService
+import com.hailm.mapinvitedemo.local.AppDatabase
+import com.hailm.mapinvitedemo.local.DataRepo
+import com.hailm.mapinvitedemo.local.DataRepoImpl
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -52,4 +55,17 @@ class AppModule {
     fun provideFireStore(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }
+
+    @Singleton
+    @Provides
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataRepo(appDatabase: AppDatabase): DataRepo {
+        return DataRepoImpl(appDatabase)
+    }
 }
+
