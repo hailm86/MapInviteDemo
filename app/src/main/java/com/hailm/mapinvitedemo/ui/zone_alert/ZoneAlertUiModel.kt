@@ -12,5 +12,6 @@ data class ZoneAlertUiModel(
     val zonePhoneNumber: String? = "",
     val zoneType: String? = "",
     val documentId: String? = "",
-    val currentZoom: Float = 0.0f
+    val currentZoom: Float = 0.0f,
+    val zoneDeviceToken: String = ""
 ) : Parcelable

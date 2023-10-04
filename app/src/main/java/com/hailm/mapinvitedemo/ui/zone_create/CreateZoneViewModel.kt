@@ -65,7 +65,8 @@ class CreateZoneViewModel @Inject constructor(
                             "zonePhoneNumber" to zoneAlert["zonePhoneNumber"],
                             "zoneType" to zoneAlert["zoneType"],
                             "zoneMember" to zoneMembers,
-                            "currentZoom" to zoneAlert["currentZoom"]
+                            "currentZoom" to zoneAlert["currentZoom"],
+                            "zoneDeviceToken" to zoneAlert["zoneDeviceToken"],
                         )
 
                         documentRef.update(updates)

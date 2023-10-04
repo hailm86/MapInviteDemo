@@ -21,8 +21,8 @@ import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.base.util.Constants.GEOFENCE_RADIUS
+import com.hailm.mapinvitedemo.ui.notification.NotificationUtils
 import com.hailm.mapinvitedemo.ui.zone_alert.ZoneAlertUiModel
-import com.hailm.mapinvitedemo.ui.zone_create.CreateZoneFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,13 +47,15 @@ class MainViewModel @Inject constructor(
                         for (document in documents) {
                             val data = document.toObject(ZoneAlert::class.java)
                             val zoneAlertUiModel = ZoneAlertUiModel(
-                                data.zoneName,
-                                data.zoneLat,
-                                data.zoneLong,
-                                data.zoneRadius,
-                                data.zonePhoneNumber,
-                                data.zoneType,
-                                document.id
+                                zoneName = data.zoneName,
+                                zoneLat = data.zoneLat,
+                                zoneLong = data.zoneLong,
+                                zoneRadius = data.zoneRadius,
+                                zonePhoneNumber = data.zonePhoneNumber,
+                                zoneType = data.zoneType,
+                                documentId = document.id,
+                                currentZoom = data.currentZoom,
+                                zoneDeviceToken = data.zoneDeviceToken
                             )
                             zoneAlertUiModels.add(zoneAlertUiModel)
                         }
@@ -87,7 +89,7 @@ class MainViewModel @Inject constructor(
                                     zoneAlertUiModel.zoneLat.toString().toDouble(),
                                     zoneAlertUiModel.zoneLong.toString().toDouble()
                                 ),
-                                zoneAlertUiModel.zoneName.toString(),
+                                zoneAlertUiModel,
                                 context
                             )
                         }
@@ -103,13 +105,12 @@ class MainViewModel @Inject constructor(
         zoneMemberDocumentId: String,
         currentLatLng: LatLng,
         latLngZone: LatLng,
-        zoneName: String,
+        zoneAlertUiModel: ZoneAlertUiModel,
         context: Context?
     ) {
         viewModelScope.launch {
             val zoneMember =
                 firestore.collection(Constants.ZONE_MEMBER).document(zoneMemberDocumentId)
-            printLog("zoneMemberDocumentId==> $zoneMemberDocumentId")
             zoneMember.get()
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
@@ -131,27 +132,11 @@ class MainViewModel @Inject constructor(
                         } else {
                             isCheck = isInsideGeofenceNew
                             if (isCheck == Constants.INSIDE) {
-                                Toast.makeText(
-                                    context,
-                                    "Đối tượng đã vào trong vùng theo dõi ($zoneName) ",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                showNotification(
-                                    context!!,
-                                    "Test",
-                                    "Đối tượng đã vào trong vùng theo dõi ($zoneName) "
-                                )
+                                printLog("Đối tượng đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
+                                handleInside(context, zoneAlertUiModel)
                             } else {
-                                Toast.makeText(
-                                    context,
-                                    "Đối tượng đã ra khỏi trong vùng theo dõi ($zoneName)",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                showNotification(
-                                    context!!,
-                                    "Test",
-                                    "Đối tượng đã ra khỏi trong vùng theo dõi ($zoneName)"
-                                )
+                                printLog("Đối tượng đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
+                                handleOutside(context, zoneAlertUiModel)
                             }
                         }
 
@@ -172,8 +157,33 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun handleInside(context: Context?, zoneAlertUiModel: ZoneAlertUiModel) {
+        viewModelScope.launch {
+            val message = "Đối tượng đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            showNotification(context!!, "Test", message)
+            NotificationUtils.sendNotificationToDevice(
+                zoneAlertUiModel.zoneDeviceToken,
+                "Checking location",
+                message
+            )
+        }
+    }
+
+    private fun handleOutside(context: Context?, zoneAlertUiModel: ZoneAlertUiModel) {
+        viewModelScope.launch {
+            val message = "Đối tượng đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            showNotification(context!!, "Test", message)
+            NotificationUtils.sendNotificationToDevice(
+                zoneAlertUiModel.zoneDeviceToken,
+                "Checking location",
+                message
+            )
+        }
+    }
+
     private fun showNotification(context: Context, title: String, message: String) {
-        // Khởi tạo NotificationManagerCompat để quản lý thông báo
         val notificationManager = NotificationManagerCompat.from(context)
 
         // Kiểm tra phiên bản Android, vì từ Android 8.0 trở lên cần tạo Notification Channel
