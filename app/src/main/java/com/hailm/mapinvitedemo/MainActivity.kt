@@ -20,6 +20,7 @@ import com.hailm.mapinvitedemo.base.BaseActivity
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.helper.viewBinding
 import com.hailm.mapinvitedemo.base.model.constant.AppFragmentType
+import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.databinding.ActivityMainBinding
 import com.hailm.mapinvitedemo.service.LocationTrackingService
 import com.hailm.mapinvitedemo.ui.MainViewModel
@@ -49,6 +50,11 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        // Đăng ký BroadcastReceiver để lắng nghe broadcast
+        val filter = IntentFilter(Constants.LOCATION_UPDATE)
+        filter.priority = IntentFilter.SYSTEM_HIGH_PRIORITY // Add this line
+        registerReceiver(locationReceiver, filter, null, null)
         initView()
     }
 
@@ -79,7 +85,7 @@ class MainActivity : BaseActivity() {
 
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == "LocationUpdated") {
+            if (intent?.action == Constants.LOCATION_UPDATE) {
                 val latitude = intent.getDoubleExtra("latitude", 0.0)
                 val longitude = intent.getDoubleExtra("longitude", 0.0)
                 // Process location data here
@@ -92,13 +98,14 @@ class MainActivity : BaseActivity() {
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onResume() {
         super.onResume()
-        val filter = IntentFilter("LocationUpdated")
-        filter.priority = IntentFilter.SYSTEM_HIGH_PRIORITY // Add this line
-        registerReceiver(locationReceiver, filter, null, null)
     }
 
     override fun onPause() {
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         unregisterReceiver(locationReceiver)
     }
 

@@ -25,6 +25,8 @@ object Constants {
     const val ZONE_DANGER = "1"
     const val ZONE_ONE_TIME = "2"
 
+    const val LOCATION_UPDATE = "LOCATION_UPDATE"
+
     // Table
     const val USERS = "users"
     const val USER_INVITE = "invite_user"
