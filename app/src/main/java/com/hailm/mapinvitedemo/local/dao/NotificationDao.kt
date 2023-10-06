@@ -9,7 +9,7 @@ import com.hailm.mapinvitedemo.local.entity.NotificationEntity
 
 @Dao
 abstract class NotificationDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract suspend fun insert(notification: NotificationEntity)
 
     @Transaction

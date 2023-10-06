@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
 import com.hailm.mapinvitedemo.base.extension.setThrottleClickListener
@@ -61,10 +62,12 @@ class AddMemberBottomSheet : BottomSheetDialogFragment() {
 
         viewModel.hasZoneMember.observe(viewLifecycleOwner) {
             if (!it.first) {
+                val dateTime = Timestamp.now()
                 viewModel.addMemberToZone(
                     it.second,
                     documentId.toString(),
-                    "NameTest"
+                    "NameTest",
+                    dateTime
                 )
                 Toast.makeText(context, "add ${it.second}", Toast.LENGTH_SHORT).show()
             }

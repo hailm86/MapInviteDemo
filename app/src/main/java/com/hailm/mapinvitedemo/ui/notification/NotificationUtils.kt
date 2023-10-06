@@ -6,17 +6,20 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 object NotificationUtils {
     @OptIn(DelicateCoroutinesApi::class)
-    fun sendNotificationToDevice(deviceToken: String, title: String, message: String) {
-        printLog("===> start send to deviceToken: $deviceToken")
+    fun sendNotificationToDevice(
+        deviceToken: String,
+        title: String,
+        message: String,
+        zoneName: String,
+        updateTime: String
+    ) {
         GlobalScope.launch(Dispatchers.IO) {
             val serverKey = Constants.SERVER_KEY_FCM
 
@@ -25,15 +28,11 @@ object NotificationUtils {
         {
              "to" : "$deviceToken",
              "collapse_key" : "type_a",
-             "notification" : {
-                 "body" : "$message",
-                 "title": "$title"
-             },
              "data" : {
-                 "body" : "$message",
                  "title": "$title",
-                 "key_1" : "giá trị key_1",
-                 "key_2" : "giá trị key_2"
+                 "body" : "$message",
+                 "zoneName" : "$zoneName",
+                 "updateDate" : "$updateTime"
              }
         }
     """.trimIndent()

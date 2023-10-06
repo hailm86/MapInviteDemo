@@ -163,6 +163,10 @@ class MapFragment : BaseFragment(R.layout.fragment_map), OnMapReadyCallback {
             btnZoneAlert.setThrottleClickListener {
                 findNavController().navigate(NavMainDirections.actionGlobalZoneAlertFragment())
             }
+
+            btnHistory.setThrottleClickListener {
+                findNavController().navigate(NavMainDirections.actionGlobalNotificationFragment())
+            }
         }
     }
 

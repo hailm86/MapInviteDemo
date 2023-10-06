@@ -5,6 +5,7 @@
     <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
 
     <string name="MAPS_API_KEY">AIzaSyAe7iKKBJBMsGBEWJnHjZ_HfYIJlegK3nc</string>
+    <string name="default_notification_channel_id">channel_id</string>
 
     <!-- navigation -->
     <string name="text.home">Trang chủ</string>

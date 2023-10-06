@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.Timestamp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
@@ -181,6 +182,7 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
 
     private fun saveZoneToFirebase(deviceToken: String = "") {
         val zoneName = mBinding.edtZoneAlertName.text.toString().trim()
+        val dateTime = Timestamp.now()
         val newUserIds = listOf<String>()
         val zoneData = hashMapOf(
             "zoneName" to zoneName,
@@ -191,7 +193,8 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             "zoneType" to zoneType,
             "zoneMember" to newUserIds,
             "currentZoom" to currentZoom,
-            "zoneDeviceToken" to deviceToken
+            "zoneDeviceToken" to deviceToken,
+            "updateTime" to dateTime
         )
 
         if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.base.BaseViewModel
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
@@ -67,6 +68,7 @@ class CreateZoneViewModel @Inject constructor(
                             "zoneMember" to zoneMembers,
                             "currentZoom" to zoneAlert["currentZoom"],
                             "zoneDeviceToken" to zoneAlert["zoneDeviceToken"],
+                            "updateTime" to zoneAlert["updateTime"],
                         )
 
                         documentRef.update(updates)
@@ -116,7 +118,12 @@ class CreateZoneViewModel @Inject constructor(
         }
     }
 
-    fun addMemberToZone(memberPhone: String, documentIdZoneAlert: String, memberName: String) {
+    fun addMemberToZone(
+        memberPhone: String,
+        documentIdZoneAlert: String,
+        memberName: String,
+        updateTimestamp: Timestamp
+    ) {
         viewModelScope.launch {
             val areaRef =
                 firestore.collection(ZONE_ALERT).document(documentIdZoneAlert)
@@ -130,7 +137,12 @@ class CreateZoneViewModel @Inject constructor(
                             updatedUserIds.add(memberPhone)
                             getLatLongUser(
                                 memberPhone,
-                                MemberData(documentIdZoneAlert, memberPhone, memberName)
+                                MemberData(
+                                    documentIdZoneAlert,
+                                    memberPhone,
+                                    memberName,
+                                    updateTimestamp
+                                )
                             )
                         }
 
@@ -154,6 +166,7 @@ class CreateZoneViewModel @Inject constructor(
         memberData: MemberData
     ) {
         viewModelScope.launch {
+            //TODO code
 //            val isInsideGeofence = if (isInsideGeofence(
 //                    latLongMember,
 //                    CreateZoneFragment.GEOFENCE_RADIUS
@@ -228,5 +241,6 @@ class CreateZoneViewModel @Inject constructor(
 data class MemberData(
     val documentIdZoneAlert: String,
     val zoneMember: String,
-    val memberName: String
+    val memberName: String,
+    val updateTime: Timestamp
 )

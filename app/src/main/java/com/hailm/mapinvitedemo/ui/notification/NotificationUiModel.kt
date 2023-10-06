@@ -1,14 +1,10 @@
-package com.hailm.mapinvitedemo.local.entity
+package com.hailm.mapinvitedemo.ui.notification
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity
-data class NotificationEntity(
-    @PrimaryKey(autoGenerate = true)
+data class NotificationUiModel(
     val id: Long = 0,
     val phoneNumber: String = "",
     var title: String = "",

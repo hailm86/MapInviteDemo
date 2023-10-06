@@ -12,10 +12,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseViewModel
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
+import com.hailm.mapinvitedemo.base.extension.getCreatedDate
 import com.hailm.mapinvitedemo.base.extension.isInsideGeofence
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
@@ -140,7 +142,13 @@ class MainViewModel @Inject constructor(
                             }
                         }
 
-                        zoneMember.update("isInsideGeofence", isCheck)
+                        val dateTime = Timestamp.now()
+                        val updates = hashMapOf(
+                            "isInsideGeofence" to isCheck,
+                            "updateTime" to dateTime
+                        )
+
+                        zoneMember.update(updates as Map<String, Any>)
                             .addOnSuccessListener {
                                 printLog("update isInsideGeofence success $isCheck")
                                 // Người dùng đã được thêm vào khu vực (Area) thành công
@@ -162,10 +170,14 @@ class MainViewModel @Inject constructor(
             val message = "Đối tượng đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             showNotification(context!!, "Test", message)
+
+            val updateDate = getCreatedDate()
             NotificationUtils.sendNotificationToDevice(
                 zoneAlertUiModel.zoneDeviceToken,
                 "Checking location",
-                message
+                message,
+                zoneAlertUiModel.zoneName.toString(),
+                updateDate
             )
         }
     }
@@ -175,10 +187,14 @@ class MainViewModel @Inject constructor(
             val message = "Đối tượng đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             showNotification(context!!, "Test", message)
+
+            val updateDate = getCreatedDate()
             NotificationUtils.sendNotificationToDevice(
                 zoneAlertUiModel.zoneDeviceToken,
                 "Checking location",
-                message
+                message,
+                zoneAlertUiModel.zoneName.toString(),
+                updateDate
             )
         }
     }
