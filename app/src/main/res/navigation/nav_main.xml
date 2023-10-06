@@ -84,4 +84,12 @@
     <action
         android:id="@+id/action_global_createZoneFragment"
         app:destination="@id/createZoneFragment" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.hailm.mapinvitedemo.ui.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
+    <action
+        android:id="@+id/action_global_notificationFragment"
+        app:destination="@id/notificationFragment" />
 </navigation>

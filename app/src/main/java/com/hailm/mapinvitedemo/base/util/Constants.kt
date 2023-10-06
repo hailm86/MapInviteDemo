@@ -42,4 +42,6 @@ object Constants {
     // Key bundle
     const val DOCUMENT_ID = "document_dd"
     const val MEMBER_LIST = "member_list"
+
+    const val SERVER_KEY_FCM = "AAAAy83_w7c:APA91bFdKTl3ToERhfUWmrCR-3xYx1e4PGzKSmvoNNpX6Ledtwbj7soWhlIDFZ2UjSWzi61qw9NeldiI5oRWsZ8NCvzNK3LYTzk29RYNQRWVFsOwpBO185BUUnJnhiM6t4NZB0oYzJuK"
 }

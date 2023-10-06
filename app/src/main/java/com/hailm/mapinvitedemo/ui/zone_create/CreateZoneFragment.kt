@@ -25,6 +25,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.Timestamp
+import com.google.firebase.messaging.FirebaseMessaging
 import com.hailm.mapinvitedemo.R
 import com.hailm.mapinvitedemo.base.BaseFragment
 import com.hailm.mapinvitedemo.base.cache.UserProfileProvider
@@ -136,14 +138,21 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             }
 
             createGeofenceButton.setThrottleClickListener {
-                createGeofence()
+//                createGeofence()
 
                 if (edtZoneAlertName.text.toString().isEmpty()) {
                     Toast.makeText(context, "Please enter zoneName", Toast.LENGTH_SHORT).show()
                     return@setThrottleClickListener
                 }
-
-                saveZoneToFirebase()
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val deviceToken = task.result
+                        saveZoneToFirebase(deviceToken)
+                    } else {
+                        // Xử lý trường hợp không thể lấy được token.
+                        saveZoneToFirebase()
+                    }
+                }
             }
 
             btnDanger.setThrottleClickListener {
@@ -171,8 +180,9 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         }
     }
 
-    private fun saveZoneToFirebase() {
+    private fun saveZoneToFirebase(deviceToken: String = "") {
         val zoneName = mBinding.edtZoneAlertName.text.toString().trim()
+        val dateTime = Timestamp.now()
         val newUserIds = listOf<String>()
         val zoneData = hashMapOf(
             "zoneName" to zoneName,
@@ -182,7 +192,9 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
             "zonePhoneNumber" to userProfileProvider.userPhoneNumber.toString(),
             "zoneType" to zoneType,
             "zoneMember" to newUserIds,
-            "currentZoom" to currentZoom
+            "currentZoom" to currentZoom,
+            "zoneDeviceToken" to deviceToken,
+            "updateTime" to dateTime
         )
 
         if (mArgs.fromTo == Constants.FROM_ZONE_ALERT_CREATE) {
@@ -215,28 +227,28 @@ class CreateZoneFragment : BaseFragment(R.layout.fragment_create_zone), OnMapRea
         val geofencingRequest = GeofencingRequest.Builder().addGeofences(geofenceList)
             .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER).build()
 
-        geofencePendingIntent = getGeofencePendingIntent()
+//        geofencePendingIntent = getGeofencePendingIntent()
+//
+//        if (ActivityCompat.checkSelfPermission(
+//                context, Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            return
+//        }
+//        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
+//            addOnSuccessListener {
+//                Toast.makeText(context, "Geofences added", Toast.LENGTH_SHORT).show()
+//            }
+//            addOnFailureListener { e ->
+//            }
+//        }
+//    }
 
-        if (ActivityCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
-            addOnSuccessListener {
-                Toast.makeText(context, "Geofences added", Toast.LENGTH_SHORT).show()
-            }
-            addOnFailureListener { e ->
-            }
-        }
-    }
-
-    private fun getGeofencePendingIntent(): PendingIntent {
-        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
-        return PendingIntent.getBroadcast(
-            requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
+//    private fun getGeofencePendingIntent(): PendingIntent {
+//        val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
+//        return PendingIntent.getBroadcast(
+//            requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE
+//        )
     }
 
     override val viewModelList: List<ViewModel>

@@ -58,12 +58,26 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/app_id" />
 
-        <receiver android:name=".ui.zone_create.GeofenceBroadcastReceiver"/>
+<!--        <receiver android:name=".ui.zone_create.GeofenceBroadcastReceiver"/>-->
 
         <service
             android:name=".service.LocationTrackingService"
             android:enabled="true"
             android:exported="false" />
+
+        <service
+            android:name=".ui.notification.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+
+
     </application>
 
 </manifest>
