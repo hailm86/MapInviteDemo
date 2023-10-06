@@ -13,6 +13,7 @@ import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.helper.SingleLiveEvent
 import com.hailm.mapinvitedemo.base.model.User
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
+import com.hailm.mapinvitedemo.base.model.ZoneMember
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.base.util.Constants.ZONE_ALERT
 import com.hailm.mapinvitedemo.base.util.Constants.ZONE_MEMBER
@@ -137,11 +138,12 @@ class CreateZoneViewModel @Inject constructor(
                             updatedUserIds.add(memberPhone)
                             getLatLongUser(
                                 memberPhone,
-                                MemberData(
-                                    documentIdZoneAlert,
-                                    memberPhone,
-                                    memberName,
-                                    updateTimestamp
+                                ZoneMember(
+                                    documentIdZoneAlert = documentIdZoneAlert,
+                                    isInsideGeofence = "0",
+                                    zoneMember = memberPhone,
+                                    memberName = memberName,
+                                    updateTime = updateTimestamp
                                 )
                             )
                         }
@@ -163,7 +165,7 @@ class CreateZoneViewModel @Inject constructor(
 
     private fun createZoneMemberToFirebase(
         latLongMember: LatLng,
-        memberData: MemberData
+        memberData: ZoneMember
     ) {
         viewModelScope.launch {
             //TODO code
@@ -195,7 +197,7 @@ class CreateZoneViewModel @Inject constructor(
         }
     }
 
-    private fun getLatLongUser(phoneNumber: String, memberData: MemberData) {
+    private fun getLatLongUser(phoneNumber: String, memberData: ZoneMember) {
         viewModelScope.launch {
             firestore
                 .collection(Constants.USERS)
@@ -237,10 +239,3 @@ class CreateZoneViewModel @Inject constructor(
             }
     }
 }
-
-data class MemberData(
-    val documentIdZoneAlert: String,
-    val zoneMember: String,
-    val memberName: String,
-    val updateTime: Timestamp
-)

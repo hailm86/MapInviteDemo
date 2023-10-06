@@ -31,6 +31,7 @@
         app:layout_constraintTop_toTopOf="@id/imgBack" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:paddingBottom="20dp"
         android:id="@+id/rvNotification"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -63,8 +63,8 @@ public class DateFormatUtils {
     }
 
     public static String getDateString(Date date, DateFormat dateFormat) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat.pattern, Locale.JAPAN);
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Japan"));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat.pattern);
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
         return simpleDateFormat.format(date);
     }
 

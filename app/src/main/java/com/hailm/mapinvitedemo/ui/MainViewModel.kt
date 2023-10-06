@@ -21,6 +21,7 @@ import com.hailm.mapinvitedemo.base.extension.getCreatedDate
 import com.hailm.mapinvitedemo.base.extension.isInsideGeofence
 import com.hailm.mapinvitedemo.base.extension.printLog
 import com.hailm.mapinvitedemo.base.model.ZoneAlert
+import com.hailm.mapinvitedemo.base.model.ZoneMember
 import com.hailm.mapinvitedemo.base.util.Constants
 import com.hailm.mapinvitedemo.base.util.Constants.GEOFENCE_RADIUS
 import com.hailm.mapinvitedemo.ui.notification.NotificationUtils
@@ -77,15 +78,16 @@ class MainViewModel @Inject constructor(
     ) {
         for (zoneAlertUiModel in zoneAlertUiModels) {
             val zoneMember = firestore.collection(Constants.ZONE_MEMBER)
-            zoneMember
-                .whereEqualTo("documentIdZoneAlert", zoneAlertUiModel.documentId)
+            zoneMember.whereEqualTo("documentIdZoneAlert", zoneAlertUiModel.documentId)
                 .whereEqualTo("zoneMember", userProfileProvider.userPhoneNumber.toString())
                 .get()
                 .addOnSuccessListener { documents ->
                     if (!documents.isEmpty) {
                         for (document in documents) {
+                            val memberName = document.getString("memberName")
                             updateInOutZoneMember(
                                 document.id,
+                                memberName.toString(),
                                 currentLatLng,
                                 LatLng(
                                     zoneAlertUiModel.zoneLat.toString().toDouble(),
@@ -105,6 +107,7 @@ class MainViewModel @Inject constructor(
 
     private fun updateInOutZoneMember(
         zoneMemberDocumentId: String,
+        memberName: String,
         currentLatLng: LatLng,
         latLngZone: LatLng,
         zoneAlertUiModel: ZoneAlertUiModel,
@@ -134,11 +137,11 @@ class MainViewModel @Inject constructor(
                         } else {
                             isCheck = isInsideGeofenceNew
                             if (isCheck == Constants.INSIDE) {
-                                printLog("Đối tượng đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
-                                handleInside(context, zoneAlertUiModel)
+                                printLog("$memberName đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
+                                handleInside(context, zoneAlertUiModel, memberName)
                             } else {
-                                printLog("Đối tượng đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
-                                handleOutside(context, zoneAlertUiModel)
+                                printLog("$memberName đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName} ---  $isCheck")
+                                handleOutside(context, zoneAlertUiModel, memberName)
                             }
                         }
 
@@ -165,9 +168,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun handleInside(context: Context?, zoneAlertUiModel: ZoneAlertUiModel) {
+    private fun handleInside(
+        context: Context?,
+        zoneAlertUiModel: ZoneAlertUiModel,
+        memberName: String
+    ) {
         viewModelScope.launch {
-            val message = "Đối tượng đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
+            val message = "$memberName đã vào trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             showNotification(context!!, "Test", message)
 
@@ -182,9 +189,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun handleOutside(context: Context?, zoneAlertUiModel: ZoneAlertUiModel) {
+    private fun handleOutside(
+        context: Context?,
+        zoneAlertUiModel: ZoneAlertUiModel,
+        memberName: String
+    ) {
         viewModelScope.launch {
-            val message = "Đối tượng đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
+            val message =
+                "$memberName đã ra khỏi trong vùng theo dõi (${zoneAlertUiModel.zoneName})"
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             showNotification(context!!, "Test", message)
 
